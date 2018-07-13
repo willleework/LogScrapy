@@ -29,10 +29,10 @@
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="5">
                                 <TextBlock  Text="缓存类型："  FontSize="11" HorizontalAlignment="Center" Padding="5" Style="{StaticResource SubHeaderTextBlockStyle}"  />
-                                <ComboBox x:Name="cmbCacheType" FontSize="11" Width="178" SelectedIndex="6" Text="全部" Height="30">
-                                    <ComboBoxItem Content="全部" />
+                                <ComboBox x:Name="cmb_CacheType" FontSize="11" Width="178" SelectedIndex="6" Text="全部" Height="30">
+                                    <!--<ComboBoxItem Content="全部" />
                                     <ComboBoxItem Content="FutureEntrust" />
-                                    <ComboBoxItem Content="FuturePosition" />
+                                    <ComboBoxItem Content="FuturePosition" />-->
                                 </ComboBox>
                             </StackPanel>
                             <StackPanel Margin="5" Orientation="Horizontal" VerticalAlignment="Center">
@@ -77,13 +77,13 @@
                         <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Text="*基础设置" Style="{StaticResource HeaderTextBlockStyle}" Height="29" Width="128"></TextBlock>
                         <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center">
                             <TextBlock Text="基础缓存配置文件地址：" Width="250" TextAlignment="Right" Style="{StaticResource SubHeaderTextBlockStyle}"></TextBlock>
-                            <TextBox x:Name="tb_baseCacheSettingFile" Width="260" Height="30"></TextBox>
-                            <Button>选择文件</Button>
+                            <TextBox x:Name="tb_baseCacheSettingFile" IsReadOnly="True" Width="260" Height="30"></TextBox>
+                            <Button Click="CommonCacheConfigFileSelect_Click">选择文件</Button>
                         </StackPanel>
                         <StackPanel Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Center">
                             <TextBlock Text="衍生品缓存配置文件地址：" Width="250" TextAlignment="Right" Style="{StaticResource SubHeaderTextBlockStyle}"></TextBlock>
-                            <TextBox x:Name="tb_derCacheSettingFile" Width="260" Height="30"></TextBox>
-                            <Button>选择文件</Button>
+                            <TextBox x:Name="tb_derCacheSettingFile" IsReadOnly="True" Width="260" Height="30"></TextBox>
+                            <Button Click="DerCacheConfigFileSelect_Click">选择文件</Button>
                         </StackPanel>
                     </Grid>
                     <!--解析策略设置-->
@@ -109,12 +109,11 @@
                             <DataGrid x:Name="grid_CachePattern" 
                                       HorizontalAlignment="Center" 
                                       AutoGenerateColumns="False" 
-                                      CanUserAddRows="False"
                                       Height="188" 
                                       Width="747">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="缓存类型" Binding="{Binding CacheType}" Width="200" IsReadOnly="True"/>
-                                    <DataGridTextColumn Header="识别策略" Binding="{Binding Pattern}" Width="400" IsReadOnly="True"/>
+                                    <DataGridTextColumn Header="缓存类型" Binding="{Binding CacheType}" Width="200"/>
+                                    <DataGridTextColumn Header="识别策略" Binding="{Binding Pattern}" Width="400"/>
                                 </DataGrid.Columns>
                             </DataGrid>
                             <StackPanel Orientation="Horizontal" Margin="5">

@@ -3,6 +3,7 @@ using Config.Interface;
 using Engine;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -43,15 +44,14 @@ namespace LogScrapy
         /// <returns></returns>
         public string GetCachePatternByType(string cacheType)
         {
-            UserAppConfig config = Engine.Get<IAppConfigManage>() as UserAppConfig;
-            switch (cacheType)
+            CachePattern pattern = Engine.Get<IAppConfigManage>().UserConfig.缓存匹配策略列表.Find(p => p.CacheType.Equals(cacheType));
+            if (pattern != null)
             {
-                case "FutureEntrust":
-                case "FuturePosition":
-                    return config.缓存匹配策略列表.Find(p => p.CacheType == "FutureEntrust").Pattern;
-                case "全部":
-                default:
-                    return "";
+                return pattern.Pattern;
+            }
+            else
+            {
+                return string.Empty;
             }
         }
 
@@ -72,6 +72,20 @@ namespace LogScrapy
                 }
             }
             return true;
+        }
+
+        /// <summary>
+        /// 获取缓存类型
+        /// </summary>
+        /// <returns></returns>
+        public List<string> GetCacheType()
+        {
+            List<string> types = new List<string>();
+            foreach (DataRow row in Engine.Get<IAppConfigManage>().CacheLogConfig.衍生品缓存表.Rows)
+            {
+                types.Add(row["英文名"].ToString());
+            }
+            return types;
         }
     }
 }

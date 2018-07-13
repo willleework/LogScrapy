@@ -10,9 +10,9 @@ using Utilities;
 namespace Config.Entity
 {
     /// <summary>
-    /// 用户配置文件
+    /// 用户配置
     /// </summary>
-    public class UserAppConfig : IAppConfigManage
+    public class UserAppConfig: IConfigBase
     {
         #region 属性
         public string 公共缓存配置目录 { get; set; }
@@ -30,13 +30,14 @@ namespace Config.Entity
         /// 加载配置
         /// </summary>
         /// <param name="path"></param>
-        public void LoadConfigs(string path)
+        public void LoadConfigs(IConfigParam param)
         {
             try
             {
-                if (File.Exists(path))
+                UserAppConfigParam appConfig = param as UserAppConfigParam;
+                if (File.Exists(appConfig.ConfigPath))
                 {
-                    UserAppConfig config = SerializeHelper.Load(typeof(UserAppConfig), path) as UserAppConfig;
+                    UserAppConfig config = SerializeHelper.Load(typeof(UserAppConfig), appConfig.ConfigPath) as UserAppConfig;
                     if (config != null)
                     {
                         this.公共缓存配置目录 = config.公共缓存配置目录;
@@ -69,9 +70,10 @@ namespace Config.Entity
         /// 保存配置
         /// </summary>
         /// <param name="path"></param>
-        public void SaveConfigs(string path)
+        public void SaveConfigs(IConfigParam param)
         {
-            SerializeHelper.Save(this, path);
+            UserAppConfigParam appConfig = param as UserAppConfigParam;
+            SerializeHelper.Save(this, appConfig.ConfigPath);
         }
 
         /// <summary>
@@ -89,6 +91,7 @@ namespace Config.Entity
             缓存匹配策略列表 = new List<CachePattern>();
         }
     }
+
 
     /// <summary>
     /// 缓存匹配策略

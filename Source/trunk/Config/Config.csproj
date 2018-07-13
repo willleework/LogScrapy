@@ -40,9 +40,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Entity\AppConfigManage.cs" />
+    <Compile Include="Entity\ConfigParam.cs" />
+    <Compile Include="Entity\CacheLogConfig.cs" />
     <Compile Include="Entity\UserAppConfig.cs" />
     <Compile Include="Interface\IAppConfigManage.cs" />
-    <Compile Include="Interface\IConfigManage.cs" />
+    <Compile Include="Interface\IConfigBase.cs" />
+    <Compile Include="Interface\IConfigParam.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

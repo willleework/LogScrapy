@@ -27,9 +27,20 @@ namespace LogScrapy
     /// </summary>
     public partial class MainWindow : Window
     {
+        #region 属性
+        /// <summary>
+        /// 业务逻辑层
+        /// </summary>
         LSPresenter Presenter { get; set; }
-        UserAppConfig UserConfig { get; set; }
+        /// <summary>
+        /// 日志文件路径
+        /// </summary>
         string LogFile { get; set; }
+        /// <summary>
+        /// 客户端配置文件路径
+        /// </summary>
+        string configFile = string.Format(@"{0}\Config\logscrapyconfig.xml", Directory.GetCurrentDirectory());
+        #endregion
 
 
         List<LogEntityBase> datas = new List<LogEntityBase>();
@@ -37,6 +48,48 @@ namespace LogScrapy
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        /// <summary>
+        /// 界面加载
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            ScrapyEngine engine = new ScrapyEngine();
+            EngineParam param = new EngineParam()
+            {
+                AppConfigPath = @configFile
+            };
+            engine.BootEngine(param);
+            Presenter = new LSPresenter(this, engine);
+            QueryPageInit();
+            SettingInit();
+        }
+    }
+
+    /// <summary>
+    /// MainWindow.xaml 的交互逻辑
+    /// 主界面
+    /// </summary>
+    public partial class MainWindow
+    {
+        #region 属性
+        public static DependencyProperty CacheTypesProperty = DependencyProperty.Register("CacheTypes", typeof(IEnumerable<string>), typeof(ComboBox));
+        /// <summary>
+        /// 缓存类型
+        /// </summary>
+        public List<string> CacheTypes
+        {
+            get { return (List<string>)GetValue(CacheModeProperty); }
+            set { SetValue(CacheModeProperty, value); }
+        }
+        #endregion
+
+        private void QueryPageInit()
+        {
+            cmb_CacheType.ItemsSource = new ObservableCollection<string>( Presenter.GetCacheType());
         }
 
         /// <summary>
@@ -57,7 +110,7 @@ namespace LogScrapy
             {
                 return;
             }
-            List<LogEntityBase> logs = logUtility.DecodeLog(log, UserConfig.分行策略, UserConfig.时间戳提取策略);
+            List<LogEntityBase> logs = logUtility.DecodeLog(log, Presenter.Engine.Get<IAppConfigManage>().UserConfig.分行策略, Presenter.Engine.Get<IAppConfigManage>().UserConfig.时间戳提取策略);
             if (logs == null || logs.Count <= 0)
             {
                 return;
@@ -66,11 +119,16 @@ namespace LogScrapy
 
             #region 获取过滤模式
             List<Regex> regexs = new List<Regex>();
-            string cachePattern = Presenter.GetCachePatternByType(cmbCacheType.Text);
+            string cachePattern = Presenter.GetCachePatternByType(cmb_CacheType.Text);
             if (!string.IsNullOrWhiteSpace(cachePattern))
             {
                 Regex regCachePattern = new Regex(@cachePattern);
                 regexs.Add(regCachePattern);
+            }
+            else
+            {
+                MessageBox.Show("没有配置当前缓存对应的匹配策略");
+                return;
             }
 
             TextRange textRange = new TextRange(rtxFilterPattern.Document.ContentStart, rtxFilterPattern.Document.ContentEnd);
@@ -87,58 +145,6 @@ namespace LogScrapy
             dataGrid.ItemsSource = logEntities;
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            string path = string.Format(@"{0}\Config\logscrapyconfig.xml", Directory.GetCurrentDirectory());
-            ScrapyEngine engine = new ScrapyEngine();
-            EngineParam param = new EngineParam()
-            {
-                AppConfigPath = path
-            };
-            engine.BootEngine(param);
-            Presenter = new LSPresenter(this, engine);
-            UserConfig = Presenter.Engine.Get<IAppConfigManage>() as UserAppConfig;
-            SettingInit();
-        }
-
-        /// <summary>
-        /// 设置初始化
-        /// </summary>
-        private void SettingInit()
-        {
-            tb_baseCacheSettingFile.Text = UserConfig.公共缓存配置目录;
-            tb_derCacheSettingFile.Text = UserConfig.衍生品缓存配置目录;
-            txt_RawRowPattern.Text = UserConfig.分行策略;
-            txt_TimeStrapPattern.Text = UserConfig.时间戳提取策略;
-            if (UserConfig.缓存匹配策略列表 != null && UserConfig.缓存匹配策略列表.Count > 0)
-            {
-                grid_CachePattern.ItemsSource = new ObservableCollection<CachePattern>(UserConfig.缓存匹配策略列表);
-            }
-        }
-
-        /// <summary>
-        /// 保存配置
-        /// </summary>
-        /// <returns></returns>
-        private void SaveSetting()
-        {
-            UserConfig.公共缓存配置目录 = tb_baseCacheSettingFile.Text;
-            UserConfig.衍生品缓存配置目录 = tb_derCacheSettingFile.Text;
-            UserConfig.分行策略 = txt_RawRowPattern.Text;
-            UserConfig.时间戳提取策略 = txt_TimeStrapPattern.Text;
-        }
-
-        /// <summary>
-        /// 保存配置
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void SaveSetting_Click(object sender, RoutedEventArgs e)
-        {
-            string path = string.Format(@"{0}\Config\logscrapyconfig.xml", Directory.GetCurrentDirectory());
-            UserConfig.SaveConfigs(@path);
-        }
-
         /// <summary>
         /// 选择日志文件
         /// </summary>
@@ -148,7 +154,7 @@ namespace LogScrapy
         {
             Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
             ofd.DefaultExt = ".log";
-            ofd.Filter = "log file|*.log|All files (*.*)|*.*";
+            ofd.Filter = "All files (*.*)|*.*|log file|*.log";
             if (ofd.ShowDialog() == true)
             {
                 tb_LogFileDir.Text = ofd.FileName;
@@ -157,12 +163,93 @@ namespace LogScrapy
         }
     }
 
-    public class CacheLogEntity
+    /// <summary>
+    /// MainWindow.xaml 的交互逻辑
+    /// 设置界面
+    /// </summary>
+    public partial class MainWindow
     {
-        public string Level { get; set; }
+        /// <summary>
+        /// 设置初始化
+        /// </summary>
+        private void SettingInit()
+        {
+            tb_baseCacheSettingFile.Text = Presenter.Engine.Get<IAppConfigManage>().UserConfig.公共缓存配置目录;
+            tb_derCacheSettingFile.Text = Presenter.Engine.Get<IAppConfigManage>().UserConfig.衍生品缓存配置目录;
+            txt_RawRowPattern.Text = Presenter.Engine.Get<IAppConfigManage>().UserConfig.分行策略;
+            txt_TimeStrapPattern.Text = Presenter.Engine.Get<IAppConfigManage>().UserConfig.时间戳提取策略;
+            if (Presenter.Engine.Get<IAppConfigManage>().UserConfig.缓存匹配策略列表 != null && Presenter.Engine.Get<IAppConfigManage>().UserConfig.缓存匹配策略列表.Count > 0)
+            {
+                grid_CachePattern.ItemsSource = new ObservableCollection<CachePattern>(Presenter.Engine.Get<IAppConfigManage>().UserConfig.缓存匹配策略列表);
+            }
+        }
 
-        public string TimeStamp { get; set; }
+        /// <summary>
+        /// 保存配置
+        /// </summary>
+        /// <returns></returns>
+        private void SaveSetting()
+        {
+            Presenter.Engine.Get<IAppConfigManage>().UserConfig.公共缓存配置目录 = tb_baseCacheSettingFile.Text;
+            Presenter.Engine.Get<IAppConfigManage>().UserConfig.衍生品缓存配置目录 = tb_derCacheSettingFile.Text;
+            Presenter.Engine.Get<IAppConfigManage>().UserConfig.分行策略 = txt_RawRowPattern.Text;
+            Presenter.Engine.Get<IAppConfigManage>().UserConfig.时间戳提取策略 = txt_TimeStrapPattern.Text;
 
-        public string DataInfo { get; set; }
+            ObservableCollection<CachePattern> patterns = grid_CachePattern.ItemsSource as ObservableCollection<CachePattern>;
+            if (patterns != null)
+            {
+                Presenter.Engine.Get<IAppConfigManage>().UserConfig.缓存匹配策略列表 = new List<CachePattern>(patterns.ToList());
+            }
+            else
+            {
+                Presenter.Engine.Get<IAppConfigManage>().UserConfig.缓存匹配策略列表.Clear();
+            }
+        }
+
+        /// <summary>
+        /// 保存配置
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SaveSetting_Click(object sender, RoutedEventArgs e)
+        {
+            SaveSetting();
+            UserAppConfigParam config = new UserAppConfigParam() { ConfigPath = @configFile };
+            Presenter.Engine.Get<IAppConfigManage>().UserConfig.SaveConfigs(config);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void CommonCacheConfigFileSelect_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
+            ofd.DefaultExt = ".xlsm";
+            ofd.Filter = "Excel File|*.xlsm|All files (*.*)|*.*";
+            if (ofd.ShowDialog() == true)
+            {
+                tb_baseCacheSettingFile.Text = ofd.FileName;
+                Presenter.Engine.Get<IAppConfigManage>().UserConfig.公共缓存配置目录 = ofd.FileName;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void DerCacheConfigFileSelect_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
+            ofd.DefaultExt = ".xlsm";
+            ofd.Filter = "Excel File|*.xlsm|All files (*.*)|*.*";
+            if (ofd.ShowDialog() == true)
+            {
+                tb_derCacheSettingFile.Text = ofd.FileName;
+                Presenter.Engine.Get<IAppConfigManage>().UserConfig.衍生品缓存配置目录 = ofd.FileName;
+            }
+        }
     }
 }

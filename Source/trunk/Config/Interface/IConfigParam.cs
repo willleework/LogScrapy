@@ -4,13 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Config
+namespace Config.Interface
 {
-    /// <summary>
-    /// 配置管理接口
-    /// </summary>
-    public interface IConfigManage
+    public interface IConfigParam
     {
-
     }
 }

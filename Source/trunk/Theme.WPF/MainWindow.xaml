@@ -91,6 +91,7 @@
                         <ComboBoxItem Content="Italy" />
                         <ComboBoxItem Content="Spain" />
                         <ComboBoxItem Content="Russia" />
+                        <ComboBoxItem Content="Russia1" />
                         <ComboBoxItem Content="Japan" />
                         <ComboBoxItem Content="Uruguay" />
                         <ComboBoxItem Content="Canada" />
