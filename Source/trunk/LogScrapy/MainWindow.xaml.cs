@@ -131,13 +131,17 @@ namespace LogScrapy
                 return;
             }
 
-            TextRange textRange = new TextRange(rtxFilterPattern.Document.ContentStart, rtxFilterPattern.Document.ContentEnd);
-            string filterPattern = textRange.Text.TrimEnd();
-            if (!string.IsNullOrWhiteSpace(filterPattern))
-            {
-                Regex re2 = new Regex(@filterPattern);
-                regexs.Add(re2);
-            }
+            //TextRange textRange = new TextRange(rtx_FilterPattern.Document.ContentStart, rtx_FilterPattern.Document.ContentEnd);
+            //string filterPattern = textRange.Text.TrimEnd();
+            //if (!string.IsNullOrWhiteSpace(filterPattern))
+            //{
+            //    string[] patterns = filterPattern.Split(new char[]{ ',', '，'});
+            //    foreach (string pat in patterns)
+            //    {
+            //        Regex re = new Regex(@filterPattern);
+            //        regexs.Add(re);
+            //    }
+            //}
             #endregion
 
             ObservableCollection<LogEntityBase> logEntities = new ObservableCollection<LogEntityBase>(logs);
