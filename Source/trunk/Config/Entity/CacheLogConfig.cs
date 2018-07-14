@@ -31,8 +31,29 @@ namespace Config.Entity
         #endregion 
         #endregion
 
+        /// <summary>
+        /// 初始化
+        /// </summary>
+        public void Init()
+        {
+            基础组缓存表 = new DataTable();
+            衍生品缓存表 = new DataTable();
+            权益缓存表 = new DataTable();
+            固收缓存表 = new DataTable();
+
+            基础组缓存字段表 = new DataTable();
+            衍生品缓存字段表 = new DataTable();
+            权益缓存字段表 = new DataTable();
+            固收缓存字段表 = new DataTable();
+        }
+
+        /// <summary>
+        /// 加载数据
+        /// </summary>
+        /// <param name="param"></param>
         public void LoadConfigs(IConfigParam param)
         {
+            Init();
             //读取缓存配置信息
             CacheLogConfigParam configParam = param as CacheLogConfigParam;
             if (File.Exists(configParam.公共缓存配置目录))

@@ -89,10 +89,10 @@
             <TabItem Header="设置界面">
                 <Grid Background="#FFE5E5E5">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="127*"></RowDefinition>
-                        <RowDefinition Height="452*"></RowDefinition>
-                        <RowDefinition Height="48*"></RowDefinition>
-                        <RowDefinition Height="79*"></RowDefinition>
+                        <RowDefinition Height="124*"></RowDefinition>
+                        <RowDefinition Height="376*"></RowDefinition>
+                        <RowDefinition Height="41*"></RowDefinition>
+                        <RowDefinition Height="68*"></RowDefinition>
                     </Grid.RowDefinitions>
                     <!--基础设置-->
                     <Grid Grid.Row="0" Background="AliceBlue">
