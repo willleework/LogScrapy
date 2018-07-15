@@ -40,8 +40,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CacheIndex.cs" />
+    <Compile Include="CacheItem.cs" />
     <Compile Include="CachePool.cs" />
-    <Compile Include="Interface\ICache.cs" />
+    <Compile Include="CacheTable.cs" />
+    <Compile Include="Common\Enum.cs" />
+    <Compile Include="DataBlock.cs" />
+    <Compile Include="Interface\ICacheIndex.cs" />
+    <Compile Include="Interface\ICacheItem.cs" />
+    <Compile Include="Interface\ICachePool.cs" />
+    <Compile Include="Interface\ICacheTable.cs" />
+    <Compile Include="Interface\IDataBlock.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
