@@ -12,21 +12,21 @@ namespace Cache
     /// </summary>
     /// <typeparam name="TCacheItem"></typeparam>
     /// <typeparam name=""></typeparam>
-    public interface IDataBlock<TCacheItem> 
+    public interface IDataBlock<TCacheItem>
     where TCacheItem : class, ICacheItem
     {
         /// <summary>
         /// 索引
         /// </summary>
-        ICacheIndex Index { get; set; }
+        ICacheIndex Index { get; }
         /// <summary>
         /// 数据
         /// </summary>
-        List<TCacheItem> Datas { get; set; }
+        List<TCacheItem> Datas { get; }
         /// <summary>
         /// 数据字典
         /// </summary>
-        Dictionary<string, TCacheItem> DataBlock { get; set; }
+        Dictionary<string, List<TCacheItem>> Block { get; }
 
         /// <summary>
         /// 添加缓存
@@ -41,7 +41,7 @@ namespace Cache
         /// <param name="index"></param>
         /// <param name="notExistAdd"></param>
         /// <returns></returns>
-        TCacheItem Get(string index);
+        List<TCacheItem> Get(string index);
         /// <summary>
         /// 更新缓存
         /// </summary>

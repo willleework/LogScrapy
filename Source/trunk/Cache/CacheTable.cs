@@ -12,6 +12,7 @@ namespace Cache
     /// </summary>
     public class CacheTable : ICacheTable<ICacheItem>
     {
+        //TODO：读写所替换
         private object _tableLock = new object();
         private ICacheIndex _uniqueIndex;
         /// <summary>
@@ -111,7 +112,7 @@ namespace Cache
             {
                 return datas;
             }
-            datas.Add(_dataRegion[indexName].Get(indexName));
+            datas.AddRange(_dataRegion[indexName].Get(indexName));
             return datas;
         }
 
@@ -155,6 +156,7 @@ namespace Cache
 
         /// <summary>
         /// 更新数据
+        /// 不存在时不更新
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
@@ -168,8 +170,8 @@ namespace Cache
             {
                 return null;
             }
-            //TODO: 更新操作
-            return item;
+            item.Copy(datas[0]);
+            return datas[0];
         }
 
         /// <summary>
