@@ -81,9 +81,16 @@ namespace LogScrapy
         public List<string> GetCacheType()
         {
             List<string> types = new List<string>();
-            foreach (DataRow row in Engine.Get<IAppConfigManage>().CacheLogConfig.衍生品缓存表.Rows)
+            try
             {
-                types.Add(row["英文名"].ToString());
+                foreach (DataRow row in Engine.Get<IAppConfigManage>().CacheLogConfig.衍生品缓存表.Rows)
+                {
+                    types.Add(row["英文名"].ToString());
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("获取缓存表信息失败");
             }
             return types;
         }
