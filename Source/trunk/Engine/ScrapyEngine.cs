@@ -39,7 +39,7 @@ namespace Engine
             //注册服务
             var builder = new ContainerBuilder();
             builder.RegisterType<AppConfigManage>().As<IAppConfigManage>().SingleInstance();
-            builder.RegisterType<CachePool>().As<ICache>().SingleInstance();
+            builder.RegisterType<CachePool>().As<ICachePool>().SingleInstance();
             builder.RegisterType<LogUtility.LogUtility>().As<ILogUtility>().SingleInstance();
 
             context = builder.Build();

@@ -12,7 +12,7 @@ namespace UnitTestProject1
         public void AutofacTest()
         {
             ScrapyEngine engine = new ScrapyEngine();
-            ICache cache = engine.Get<ICache>();
+            ICachePool cache = engine.Get<ICachePool>();
             Assert.IsTrue(cache != null);
         }
     }
