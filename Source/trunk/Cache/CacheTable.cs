@@ -102,7 +102,7 @@ namespace Cache
         /// <param name="key">主键</param>
         /// <param name="indexName">索引名称</param>
         /// <returns></returns>
-        public List<ICacheItem> Get(string key, string indexName = "")
+        public List<ICacheItem> Get(string key = "", string indexName = "")
         {
             CheckUniqueIndex();
             if (string.IsNullOrWhiteSpace(indexName))

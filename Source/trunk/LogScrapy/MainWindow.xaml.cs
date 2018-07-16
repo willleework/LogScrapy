@@ -62,10 +62,37 @@ namespace LogScrapy
             {
                 AppConfigPath = @configFile
             };
+            //耗时操作
             engine.BootEngine(param);
             Presenter = new LSPresenter(this, engine);
             QueryPageInit();
             SettingInit();
+        }
+
+        /// <summary>
+        /// 添加过滤条件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void AddFilterCondition_Click(object sender, RoutedEventArgs e)
+        {
+            string condition = string.Empty;
+            string column = cmb_CacheColumn.Text;
+            string value = tb_FilterText.Text;
+            TextRange documentTextRange = new TextRange(rtx_FilterPattern.Document.ContentStart, rtx_FilterPattern.Document.ContentEnd);
+            if (!string.IsNullOrWhiteSpace(documentTextRange.Text.Trim()))
+            {
+                condition = string.Format("{0},{1}={2}", documentTextRange.Text.Trim(), column, value);
+            }
+            else
+            {
+                condition = string.Format("{0}={1}", column, value);
+            }
+            Paragraph p = new Paragraph();
+            Run r = new Run(condition);
+            p.Inlines.Add(r);
+            rtx_FilterPattern.Document.Blocks.Clear();
+            rtx_FilterPattern.Document.Blocks.Add(p);
         }
     }
 
@@ -89,7 +116,7 @@ namespace LogScrapy
 
         private void QueryPageInit()
         {
-            cmb_CacheType.ItemsSource = new ObservableCollection<string>( Presenter.GetCacheType());
+            cmb_CacheType.ItemsSource = new ObservableCollection<string>(Presenter.GetCacheType());
         }
 
         /// <summary>
@@ -131,21 +158,20 @@ namespace LogScrapy
                 return;
             }
 
-            //TextRange textRange = new TextRange(rtx_FilterPattern.Document.ContentStart, rtx_FilterPattern.Document.ContentEnd);
-            //string filterPattern = textRange.Text.TrimEnd();
-            //if (!string.IsNullOrWhiteSpace(filterPattern))
-            //{
-            //    string[] patterns = filterPattern.Split(new char[]{ ',', '，'});
-            //    foreach (string pat in patterns)
-            //    {
-            //        Regex re = new Regex(@filterPattern);
-            //        regexs.Add(re);
-            //    }
-            //}
+            TextRange textRange = new TextRange(rtx_FilterPattern.Document.ContentStart, rtx_FilterPattern.Document.ContentEnd);
+            string filterPattern = textRange.Text.TrimEnd();
+            if (!string.IsNullOrWhiteSpace(filterPattern))
+            {
+                string[] patterns = filterPattern.Split(new char[] { ',', '，' });
+                foreach (string pat in patterns)
+                {
+                    Regex re = new Regex(@pat);
+                    regexs.Add(re);
+                }
+            }
             #endregion
 
-            ObservableCollection<LogEntityBase> logEntities = new ObservableCollection<LogEntityBase>(logs);
-            logEntities = new ObservableCollection<LogEntityBase>(datas.Where(p => Presenter.CheckPattern(regexs, p.DataInfo)));
+            ObservableCollection<LogEntityBase> logEntities = new ObservableCollection<LogEntityBase>(datas.Where(p => Presenter.CheckPattern(regexs, p.DataInfo)));
             dataGrid.ItemsSource = logEntities;
         }
 
@@ -164,6 +190,27 @@ namespace LogScrapy
                 tb_LogFileDir.Text = ofd.FileName;
                 LogFile = ofd.FileName;
             }
+        }
+
+        /// <summary>
+        /// 缓存类型选择
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void cmb_CacheType_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ObservableCollection<string> columns;
+            string cacheType = (string)cmb_CacheType.SelectedItem;
+            
+            if (string.IsNullOrWhiteSpace(cacheType))
+            {
+                columns = new ObservableCollection<string>();
+            }
+            else
+            {
+                columns = new ObservableCollection<string>(Presenter.GetCacheColumn(cacheType));
+            }
+            cmb_CacheColumn.ItemsSource = columns;
         }
     }
 

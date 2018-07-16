@@ -103,6 +103,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Cache\Cache.csproj">
+      <Project>{1D859941-7EE7-4C4F-B365-176CFA484E04}</Project>
+      <Name>Cache</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Config\Config.csproj">
       <Project>{2DC481E4-CF76-4FD9-8FAA-AD57A9255CB5}</Project>
       <Name>Config</Name>
@@ -114,6 +118,10 @@
     <ProjectReference Include="..\LogUtility\LogUtility.csproj">
       <Project>{E9342047-D6A2-4613-A02B-66BE0BC41A88}</Project>
       <Name>LogUtility</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ScrapyCache\ScrapyCache.csproj">
+      <Project>{C834C7B8-30CE-4C03-8B12-042DA28F0A20}</Project>
+      <Name>ScrapyCache</Name>
     </ProjectReference>
     <ProjectReference Include="..\Theme.WPF\Theme.WPF.csproj">
       <Project>{858a9b78-33b4-4123-8fd0-494996c482d4}</Project>

@@ -41,7 +41,7 @@ namespace Cache
         /// <param name="index"></param>
         /// <param name="notExistAdd"></param>
         /// <returns></returns>
-        List<TCacheItem> Get(string index);
+        List<TCacheItem> Get(string index = "");
         /// <summary>
         /// 更新缓存
         /// </summary>

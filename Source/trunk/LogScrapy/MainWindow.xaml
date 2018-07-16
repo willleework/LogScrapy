@@ -33,7 +33,7 @@
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="5">
                                 <TextBlock  Text="缓存类型："  FontSize="12" HorizontalAlignment="Center" Padding="5" Style="{StaticResource SubHeaderTextBlockStyle}"  />
-                                <ComboBox x:Name="cmb_CacheType" FontSize="12" Width="178" SelectedIndex="6" Text="全部" Height="30"></ComboBox>
+                                <ComboBox x:Name="cmb_CacheType" FontSize="12" Width="178" SelectedIndex="0" Text="全部" Height="30" SelectionChanged="cmb_CacheType_SelectionChanged"></ComboBox>
                             </StackPanel>
                             <StackPanel Margin="5" Orientation="Horizontal" VerticalAlignment="Center" Height="50">
                                 <TextBlock Text="过滤条件：" FontSize="11" Padding="5" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource SubHeaderTextBlockStyle}"  />
@@ -77,9 +77,12 @@
                             <TextBlock Grid.Row="0" Style="{StaticResource SubHeaderTextBlockStyle}">*复杂设置</TextBlock>
                             <StackPanel Grid.Row="1" Grid.RowSpan="2" Orientation="Horizontal">
                                 <TextBlock  Text="缓存列："  FontSize="12" HorizontalAlignment="Center" Padding="5" Style="{StaticResource SubHeaderTextBlockStyle}"  />
-                                <ComboBox x:Name="cmb_CacheColumn" FontSize="12" Width="120" SelectedIndex="6" Text="全部" Height="30"></ComboBox>
+                                <ComboBox x:Name="cmb_CacheColumn" FontSize="12" Width="120" SelectedIndex="0" Text="全部" Height="30"></ComboBox>
                                 <TextBlock  Text="="  FontSize="12" Height="30" HorizontalAlignment="Center" Padding="5" Style="{StaticResource SubHeaderTextBlockStyle}"  />
                                 <TextBox x:Name="tb_FilterText" FontSize="10" Height="30" Width="100"></TextBox>
+                            </StackPanel>
+                            <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
+                                <Button Width="70" Click="AddFilterCondition_Click">添加</Button>
                             </StackPanel>
                         </Grid>
                     </Grid>

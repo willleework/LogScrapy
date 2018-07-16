@@ -42,7 +42,8 @@ namespace Config.Entity
 
             //缓存配置加载
             _cacheLogConfig = new CacheLogConfig();
-            _cacheLogConfig.LoadConfigs(new CacheLogConfigParam() {
+            _cacheLogConfig.LoadConfigs(new CacheLogConfigParam()
+            {
                 公共缓存配置目录 = _appConfig.公共缓存配置目录,
                 衍生品缓存配置目录 = _appConfig.衍生品缓存配置目录,
                 权益缓存配置目录 = _appConfig.权益缓存配置目录,

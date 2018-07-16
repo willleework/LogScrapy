@@ -56,7 +56,7 @@ namespace Cache
         /// <param name="key">主键</param>
         /// <param name="indexName">索引名称</param>
         /// <returns></returns>
-        List<TCacheItem> Get(string key, string indexName = "");
+        List<TCacheItem> Get(string key = "", string indexName = "");
 
         /// <summary>
         /// 根据索引获取缓存

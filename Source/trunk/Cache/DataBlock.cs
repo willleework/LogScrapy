@@ -75,6 +75,7 @@ namespace Cache
                     }
                     _block[blockKey].Add(item);
                     _uniqueBlock.Add(uniqueKey, item);
+                    _datas.Add(item);
                 }
                 catch (Exception ex)
                 {
@@ -99,14 +100,18 @@ namespace Cache
         /// <summary>
         /// 根据索引获取缓存项
         /// </summary>
-        /// <param name="index"></param>
+        /// <param name="index">索引，索引为空是返回全部数据</param>
         /// <returns></returns>
-        public List<ICacheItem> Get(string index)
+        public List<ICacheItem> Get(string index="")
         {
             List<ICacheItem> datas = new List<ICacheItem>();
             try
             {
                 _blockLock.EnterReadLock();
+                if (string.IsNullOrWhiteSpace(index.Trim()))
+                {
+                    return _datas;
+                }
                 if (!_block.ContainsKey(index))
                 {
                     return datas;
@@ -150,6 +155,7 @@ namespace Cache
                     }
                     _block[blockKey].Remove(item);
                     _uniqueBlock.Remove(uniqueKey);
+                    _datas.Remove(item);
                 }
                 catch (Exception ex)
                 {

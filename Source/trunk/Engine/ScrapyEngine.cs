@@ -50,13 +50,29 @@ namespace Engine
         /// </summary>
         public void BootEngine(EngineParam engineParam)
         {
-            //配置服务初始化
+            #region 配置服务初始化
             IAppConfigManage appConfig = Get<IAppConfigManage>();
             AppConfigParam appConfigParam = new AppConfigParam()
             {
                 UserConfigPath = engineParam.AppConfigPath
             };
-            appConfig.LoadConfigs(appConfigParam);
+            appConfig.LoadConfigs(appConfigParam); 
+            #endregion
+
+            #region 缓存服务初始化
+            ScrapyCachePool cache = Get<ICachePool>() as ScrapyCachePool;
+            cache.Init();
+            //客户端缓存配置表
+            cache.Get<ClientCacheConfigTable>().LoadDatas(appConfig.CacheLogConfig.基础组缓存表);
+            cache.Get<ClientCacheConfigTable>().LoadDatas(appConfig.CacheLogConfig.衍生品缓存表);
+            cache.Get<ClientCacheConfigTable>().LoadDatas(appConfig.CacheLogConfig.权益缓存表);
+            cache.Get<ClientCacheConfigTable>().LoadDatas(appConfig.CacheLogConfig.基础组缓存表);
+            //客户端缓存列配置表
+            cache.Get<ClientCacheConfigColumnTable>().LoadDatas(appConfig.CacheLogConfig.基础组缓存字段表);
+            cache.Get<ClientCacheConfigColumnTable>().LoadDatas(appConfig.CacheLogConfig.衍生品缓存字段表);
+            cache.Get<ClientCacheConfigColumnTable>().LoadDatas(appConfig.CacheLogConfig.权益缓存字段表);
+            cache.Get<ClientCacheConfigColumnTable>().LoadDatas(appConfig.CacheLogConfig.固收缓存字段表); 
+            #endregion
         }
 
         /// <summary>

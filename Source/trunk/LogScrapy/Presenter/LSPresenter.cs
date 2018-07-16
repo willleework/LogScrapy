@@ -1,6 +1,8 @@
-﻿using Config.Entity;
+﻿using Cache;
+using Config.Entity;
 using Config.Interface;
 using Engine;
+using ScrapyCache;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -83,9 +85,10 @@ namespace LogScrapy
             List<string> types = new List<string>();
             try
             {
-                foreach (DataRow row in Engine.Get<IAppConfigManage>().CacheLogConfig.衍生品缓存表.Rows)
+                foreach (ICacheItem row in Engine.Get<ICachePool>().Get<ClientCacheConfigTable>().Get())
                 {
-                    types.Add(row["英文名"].ToString());
+                    ClientCacheConfig config = row as ClientCacheConfig;
+                    types.Add(config.英文名);
                 }
             }
             catch (Exception ex)
@@ -93,6 +96,34 @@ namespace LogScrapy
                 throw new Exception("获取缓存表信息失败", ex);
             }
             return types;
+        }
+
+        /// <summary>
+        /// 获取缓存包含的列
+        /// </summary>
+        /// <returns></returns>
+        public List<string> GetCacheColumn(string cacheName)
+        {
+            List<string> columns = new List<string>();
+            try
+            {
+                List<ICacheItem> tables = Engine.Get<ICachePool>().Get<ClientCacheConfigTable>().Get(cacheName);
+                if (tables.Count <= 0)
+                {
+                    return columns;
+                }
+                ClientCacheConfig table = tables[0] as ClientCacheConfig;
+                foreach (ICacheItem row in Engine.Get<ICachePool>().Get<ClientCacheConfigColumnTable>().Get(table.表名, ClientCacheConfigColumnTable.IndexByTable))
+                {
+                    ClientCacheConfigColumn column = row as ClientCacheConfigColumn;
+                    columns.Add(column.标准字段);
+                }
+            }
+            catch (Exception ex)
+            {
+                //TODO: 异常处理
+            }
+            return columns;
         }
     }
 }
