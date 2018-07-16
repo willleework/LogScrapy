@@ -31,11 +31,11 @@ namespace Cache
         /// </summary>
         protected Dictionary<string, ICacheIndex> IndexDiction => _indexDiction;
 
-        protected Dictionary<string, IDataBlock<ICacheItem>> _dataRegion = new Dictionary<string, IDataBlock<ICacheItem>>();
+        protected Dictionary<string, DataBlock> _dataRegion = new Dictionary<string, DataBlock>();
         /// <summary>
         /// 数据区块
         /// </summary>
-        protected Dictionary<string, IDataBlock<ICacheItem>> DataRegion => _dataRegion;
+        protected Dictionary<string, DataBlock> DataRegion => _dataRegion;
 
         /// <summary>
         /// 添加索引
@@ -63,6 +63,8 @@ namespace Cache
                         throw new Exception(string.Format("唯一索引已存在：{0}，重复设置值：{1}", _uniqueIndex.IndexName, index.IndexName));
                     }
                 }
+                DataBlock block = new DataBlock(index, _uniqueIndex);
+                _dataRegion.Add(index.IndexName, block);
             }
             return true;
         }
@@ -112,7 +114,7 @@ namespace Cache
             {
                 return datas;
             }
-            datas.AddRange(_dataRegion[indexName].Get(indexName));
+            datas.AddRange(_dataRegion[indexName].Get(key));
             return datas;
         }
 

@@ -9,10 +9,11 @@ namespace Cache
     public class CachePool : ICachePool
     {
         private object tableLock = new object();
+        private Dictionary<int, CacheTable> _cacheTables = new Dictionary<int, CacheTable>();
         /// <summary>
         /// 缓存表
         /// </summary>
-        Dictionary<Type, CacheTable> CacheTables { get; set; }
+        Dictionary<int, CacheTable> CacheTables => _cacheTables;
 
         /// <summary>
         /// 获取缓存表
@@ -20,13 +21,14 @@ namespace Cache
         /// <typeparam name="TCacheTableType"></typeparam>
         /// <returns></returns>
         public CacheTable Get<ITCacheTable>()
-        where ITCacheTable : ICacheTable<ICacheItem>
+        //where ITCacheTable : ICacheTable<ICacheItem>
         {
-            if (CacheTables.ContainsKey(typeof(ITCacheTable)))
+            int tableHash = typeof(ITCacheTable).GetHashCode();
+            if (!_cacheTables.ContainsKey(tableHash))
             {
                 throw new Exception("不存在的缓存表");
             }
-            return CacheTables[typeof(ITCacheTable)];
+            return _cacheTables[tableHash];
         }
         /// <summary>
         /// 注册缓存表
@@ -35,20 +37,21 @@ namespace Cache
         /// <param name="iTable"></param>
         /// <param name="table"></param>
         public void Register<ITCacheTable, TCacheTable>() 
-        where ITCacheTable: ICacheTable<ICacheItem>
+        //where ITCacheTable: ICacheTable<ICacheItem>
         where TCacheTable: CacheTable, new()
         {
-            if (CacheTables.ContainsKey(typeof(ITCacheTable)))
+            int tableHash = typeof(ITCacheTable).GetHashCode();
+            if (_cacheTables.ContainsKey(tableHash))
             {
                 return;
             }
             lock (tableLock)
             {
-                if (CacheTables.ContainsKey(typeof(ITCacheTable)))
+                if (_cacheTables.ContainsKey(tableHash))
                 {
                     return;
                 }
-                CacheTables[typeof(ITCacheTable)] = new TCacheTable();
+                _cacheTables[tableHash] = new TCacheTable();
             }
         }
     }

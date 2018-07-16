@@ -10,7 +10,7 @@ namespace Cache
     /// <summary>
     /// 数据块
     /// </summary>
-    internal class DataBlock : IDataBlock<ICacheItem>
+    public class DataBlock : IDataBlock<ICacheItem>
     {
         ReaderWriterLockSlim _blockLock = new ReaderWriterLockSlim();
         private ICacheIndex _index;
@@ -36,6 +36,17 @@ namespace Cache
         /// 唯一索引
         /// </summary>
         private Dictionary<string, ICacheItem> _uniqueBlock = new Dictionary<string, ICacheItem>();
+
+        /// <summary>
+        /// 数据块
+        /// </summary>
+        /// <param name="index">数据块索引</param>
+        /// <param name="uniqueIndex">唯一索引</param>
+        public DataBlock(ICacheIndex index, ICacheIndex uniqueIndex)
+        {
+            _index = index;
+            _uniqueIndex = uniqueIndex;
+        }
 
         /// <summary>
         /// 添加缓存项
@@ -125,10 +136,10 @@ namespace Cache
             try
             {
                 _blockLock.EnterUpgradeableReadLock();
-                if (_uniqueBlock.ContainsKey(uniqueKey))
+                if (!_uniqueBlock.ContainsKey(uniqueKey))
                 {
                     _blockLock.ExitUpgradeableReadLock();
-                    throw new Exception(string.Format("索引重复，数据已存在：唯一索引:{0}，区块索引:{1}", uniqueKey, blockKey));
+                    return null;
                 }
                 try
                 {
@@ -174,10 +185,10 @@ namespace Cache
             try
             {
                 _blockLock.EnterUpgradeableReadLock();
-                if (_uniqueBlock.ContainsKey(uniqueKey))
+                if (!_uniqueBlock.ContainsKey(uniqueKey))
                 {
                     _blockLock.ExitUpgradeableReadLock();
-                    throw new Exception(string.Format("索引重复，数据已存在：唯一索引:{0}，区块索引:{1}", uniqueKey, blockKey));
+                    return null;
                 }
                 try
                 {
