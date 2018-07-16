@@ -55,6 +55,7 @@
     <Compile Include="CommonUnitTest.cs" />
     <Compile Include="EngineUnitTest.cs" />
     <Compile Include="ConfigUnitTest.cs" />
+    <Compile Include="CacheUnitTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -1,5 +1,5 @@
 ﻿using System;
-using Cache.Interface;
+using Cache;
 using Engine;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
