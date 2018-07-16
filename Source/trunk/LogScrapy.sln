@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Config", "Config\Config.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogUtility", "LogUtility\LogUtility.csproj", "{E9342047-D6A2-4613-A02B-66BE0BC41A88}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScrapyCache", "ScrapyCache\ScrapyCache.csproj", "{C834C7B8-30CE-4C03-8B12-042DA28F0A20}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{E9342047-D6A2-4613-A02B-66BE0BC41A88}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E9342047-D6A2-4613-A02B-66BE0BC41A88}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E9342047-D6A2-4613-A02B-66BE0BC41A88}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C834C7B8-30CE-4C03-8B12-042DA28F0A20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C834C7B8-30CE-4C03-8B12-042DA28F0A20}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C834C7B8-30CE-4C03-8B12-042DA28F0A20}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C834C7B8-30CE-4C03-8B12-042DA28F0A20}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

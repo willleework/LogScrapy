@@ -90,7 +90,7 @@ namespace LogScrapy
             }
             catch (Exception ex)
             {
-                throw new Exception("获取缓存表信息失败");
+                throw new Exception("获取缓存表信息失败", ex);
             }
             return types;
         }

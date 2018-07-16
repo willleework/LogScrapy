@@ -114,7 +114,7 @@ namespace Cache
             {
                 return datas;
             }
-            datas.AddRange(_dataRegion[indexName].Get(key));
+            datas = _dataRegion[indexName].Get(key);
             return datas;
         }
 

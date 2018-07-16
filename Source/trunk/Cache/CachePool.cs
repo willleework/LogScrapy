@@ -20,15 +20,15 @@ namespace Cache
         /// </summary>
         /// <typeparam name="TCacheTableType"></typeparam>
         /// <returns></returns>
-        public CacheTable Get<ITCacheTable>()
-        //where ITCacheTable : ICacheTable<ICacheItem>
+        public TCacheTable Get<TCacheTable>()
+        where TCacheTable : CacheTable
         {
-            int tableHash = typeof(ITCacheTable).GetHashCode();
+            int tableHash = typeof(TCacheTable).GetHashCode();
             if (!_cacheTables.ContainsKey(tableHash))
             {
                 throw new Exception("不存在的缓存表");
             }
-            return _cacheTables[tableHash];
+            return _cacheTables[tableHash] as TCacheTable;
         }
         /// <summary>
         /// 注册缓存表
@@ -36,11 +36,11 @@ namespace Cache
         /// <typeparam name="TCacheItem"></typeparam>
         /// <param name="iTable"></param>
         /// <param name="table"></param>
-        public void Register<ITCacheTable, TCacheTable>() 
+        public void Register<TCacheTable>() 
         //where ITCacheTable: ICacheTable<ICacheItem>
         where TCacheTable: CacheTable, new()
         {
-            int tableHash = typeof(ITCacheTable).GetHashCode();
+            int tableHash = typeof(TCacheTable).GetHashCode();
             if (_cacheTables.ContainsKey(tableHash))
             {
                 return;

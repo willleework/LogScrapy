@@ -56,6 +56,7 @@
     <Compile Include="EngineUnitTest.cs" />
     <Compile Include="ConfigUnitTest.cs" />
     <Compile Include="CacheUnitTest.cs" />
+    <Compile Include="ScrapyCacheUnitTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -76,6 +77,10 @@
     <ProjectReference Include="..\Engine\Engine.csproj">
       <Project>{683C3BF1-962D-4A57-80C4-0AF7B2946144}</Project>
       <Name>Engine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ScrapyCache\ScrapyCache.csproj">
+      <Project>{C834C7B8-30CE-4C03-8B12-042DA28F0A20}</Project>
+      <Name>ScrapyCache</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />

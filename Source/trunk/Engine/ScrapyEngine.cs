@@ -1,9 +1,9 @@
 ﻿using Autofac;
 using Cache;
-using Cache.Interface;
 using Config.Entity;
 using Config.Interface;
 using LogUtility;
+using ScrapyCache;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,7 +39,7 @@ namespace Engine
             //注册服务
             var builder = new ContainerBuilder();
             builder.RegisterType<AppConfigManage>().As<IAppConfigManage>().SingleInstance();
-            builder.RegisterType<CachePool>().As<ICachePool>().SingleInstance();
+            builder.RegisterType<ScrapyCachePool>().As<ICachePool>().SingleInstance();
             builder.RegisterType<LogUtility.LogUtility>().As<ILogUtility>().SingleInstance();
 
             context = builder.Build();

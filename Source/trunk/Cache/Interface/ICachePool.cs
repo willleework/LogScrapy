@@ -17,8 +17,8 @@ namespace Cache
         /// <typeparam name="TCacheItem"></typeparam>
         /// <param name="iTable"></param>
         /// <param name="table"></param>
-        void Register<ITCacheTable, TCacheTable>()
-        //where ITCacheTable : ICacheTable<ICacheItem>
+        void Register<TCacheTable>()
+        //where ITCacheTable: ICacheTable<ICacheItem>
         where TCacheTable : CacheTable, new();
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace Cache
         /// </summary>
         /// <typeparam name="TCacheTableType"></typeparam>
         /// <returns></returns>
-        CacheTable Get<ITCacheTable>();
-        //where ITCacheTable : ICacheTable<ICacheItem>;
+        TCacheTable Get<TCacheTable>()
+        where TCacheTable : CacheTable;
     }
 }

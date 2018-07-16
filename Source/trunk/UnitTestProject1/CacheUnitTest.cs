@@ -53,22 +53,22 @@ namespace UnitTestProject1
         public void CacheTableRegisterTest()
         {
             //注册缓存表
-            _pool.Register<ITestTable, CacheTable>();
-            Assert.IsNotNull(_pool.Get<ITestTable>());
+            _pool.Register<TestTable>();
+            Assert.IsNotNull(_pool.Get<TestTable>());
         }
 
         [TestMethod]
         public void CacheTableAddIndexTest()
         {
-            _pool.Register<ITestTable, CacheTable>();
+            _pool.Register<TestTable>();
             CacheIndex index = new CacheIndex()
             {
                 IndexName = "主键测试",
                 IndexType = IndexType.唯一索引,
                 GetIndexKey= GetKey
             };
-            _pool.Get<ITestTable>().AddIndex(index);
-            List<ICacheIndex> indexs =  _pool.Get<ITestTable>().GetAllIndexs();
+            _pool.Get<TestTable>().AddIndex(index);
+            List<ICacheIndex> indexs =  _pool.Get<TestTable>().GetAllIndexs();
             Assert.IsTrue(indexs[0].IndexName.Equals("主键测试"));
         }
 
@@ -78,19 +78,19 @@ namespace UnitTestProject1
         [TestMethod]
         public void AddCacheItemTest()
         {
-            _pool.Register<ITestTable, CacheTable>();
+            _pool.Register<TestTable>();
             CacheIndex index = new CacheIndex()
             {
                 IndexName = "主键测试",
                 IndexType = IndexType.唯一索引,
                 GetIndexKey = GetKey
             };
-            _pool.Get<ITestTable>().AddIndex(index);
-            List<ICacheIndex> indexs = _pool.Get<ITestTable>().GetAllIndexs();
+            _pool.Get<TestTable>().AddIndex(index);
+            List<ICacheIndex> indexs = _pool.Get<TestTable>().GetAllIndexs();
 
             TestCacheModel model = new TestCacheModel() { ID = 1, Name = "测试" };
-            _pool.Get<ITestTable>().Add(model);
-            List<ICacheItem> item = _pool.Get<ITestTable>().Get(model.ID.ToString());
+            _pool.Get<TestTable>().Add(model);
+            List<ICacheItem> item = _pool.Get<TestTable>().Get(model.ID.ToString());
             TestCacheModel queryRlt = item[0] as TestCacheModel;
             Assert.IsNotNull(queryRlt.Name.Equals(model.Name));
         }
@@ -101,20 +101,20 @@ namespace UnitTestProject1
         [TestMethod]
         public void RemoveCacheItemTest()
         {
-            _pool.Register<ITestTable, CacheTable>();
+            _pool.Register<TestTable>();
             CacheIndex index = new CacheIndex()
             {
                 IndexName = "主键测试",
                 IndexType = IndexType.唯一索引,
                 GetIndexKey = GetKey
             };
-            _pool.Get<ITestTable>().AddIndex(index);
-            List<ICacheIndex> indexs = _pool.Get<ITestTable>().GetAllIndexs();
+            _pool.Get<TestTable>().AddIndex(index);
+            List<ICacheIndex> indexs = _pool.Get<TestTable>().GetAllIndexs();
 
             TestCacheModel model = new TestCacheModel() { ID = 1, Name = "测试" };
-            _pool.Get<ITestTable>().Add(model);
-            _pool.Get<ITestTable>().Remove(model);
-            List<ICacheItem> list = _pool.Get<ITestTable>().Get(model.ID.ToString());
+            _pool.Get<TestTable>().Add(model);
+            _pool.Get<TestTable>().Remove(model);
+            List<ICacheItem> list = _pool.Get<TestTable>().Get(model.ID.ToString());
             Assert.IsTrue(list.Count==0);
         }
 
@@ -124,26 +124,26 @@ namespace UnitTestProject1
         [TestMethod]
         public void UpdateCacheItemTest()
         {
-            _pool.Register<ITestTable, CacheTable>();
+            _pool.Register<TestTable>();
             CacheIndex index = new CacheIndex()
             {
                 IndexName = "主键测试",
                 IndexType = IndexType.唯一索引,
                 GetIndexKey = GetKey
             };
-            _pool.Get<ITestTable>().AddIndex(index);
-            List<ICacheIndex> indexs = _pool.Get<ITestTable>().GetAllIndexs();
+            _pool.Get<TestTable>().AddIndex(index);
+            List<ICacheIndex> indexs = _pool.Get<TestTable>().GetAllIndexs();
 
             TestCacheModel model = new TestCacheModel() { ID = 1, Name = "测试" };
-            _pool.Get<ITestTable>().Add(model);
+            _pool.Get<TestTable>().Add(model);
 
             TestCacheModel updateModel = new TestCacheModel()
             {
                 ID = 1,
                 Name = "测试1"
             };
-            _pool.Get<ITestTable>().Update(updateModel);
-            List<ICacheItem> item = _pool.Get<ITestTable>().Get(model.ID.ToString());
+            _pool.Get<TestTable>().Update(updateModel);
+            List<ICacheItem> item = _pool.Get<TestTable>().Get(model.ID.ToString());
             TestCacheModel queryRlt = item[0] as TestCacheModel;
             Assert.AreEqual(updateModel.Name, queryRlt.Name);
         }
