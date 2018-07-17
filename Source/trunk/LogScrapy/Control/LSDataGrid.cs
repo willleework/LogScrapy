@@ -51,7 +51,7 @@ namespace LogScrapy
             //    items.Add(item);
             //}
 
-            dataGrid.Columns.Clear();
+            dataGrid.Columns.Clear(); 
 
             dataGrid.Columns.Add(new DataGridTextColumn() { Header = "A" + index.ToString(), Binding = new Binding("A" + index.ToString()) });
             dataGrid.Columns.Add(new DataGridTextColumn() { Header = "B" + index.ToString(), Binding = new Binding("B" + index.ToString()) });

@@ -169,7 +169,7 @@
                     </Grid.RowDefinitions>
                     <local:LSDataGrid x:Name="grid" Grid.Row="0" Height="500" Width="500">
                     </local:LSDataGrid>
-                    <Button Grid.Row="1" Width="100" Height="30" Click="AddColumn_Click">测试</Button>
+                    <Button Grid.Row="1" Width="100" Height="30" Click="AddColumn_Click">测试1</Button>
                 </Grid>
             </TabItem>
         </TabControl>

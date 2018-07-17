@@ -86,7 +86,7 @@ namespace LogScrapy
 
         private void AddColumn_Click(object sender, RoutedEventArgs e)
         {
-            grid.InitColumns();
+            grid.InitColumns(); 
         }
     }
 
