@@ -83,6 +83,11 @@ namespace LogScrapy
             rtx_FilterPattern.Document.Blocks.Clear();
             rtx_FilterPattern.Document.Blocks.Add(p);
         }
+
+        private void AddColumn_Click(object sender, RoutedEventArgs e)
+        {
+            grid.InitColumns();
+        }
     }
 
     /// <summary>

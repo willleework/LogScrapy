@@ -19,7 +19,7 @@
                             <ColumnDefinition></ColumnDefinition>
                             <ColumnDefinition></ColumnDefinition>
                         </Grid.ColumnDefinitions>-->
-                        <DataGrid x:Name="grid"   
+                        <DataGrid x:Name="dataGrid"   
                                   Grid.Row="1" 
                                   Grid.Column="1" 
                                   CanUserAddRows="False"
