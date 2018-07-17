@@ -164,7 +164,7 @@ namespace UnitTestProject1
             _pool.Get<TestTable>()?.Add(null);
         }
 
-        private void LogInfo(object sender, string log)
+        private void LogInfo(string log)
         {
             log1.LogInfo(log);
         }

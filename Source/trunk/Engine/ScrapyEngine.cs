@@ -70,9 +70,9 @@ namespace Engine
             #region 缓存服务初始化
             ScrapyCachePool cache = Get<ICachePool>() as ScrapyCachePool;
             cache.Init();
-            CacheLog.LogDebugEvent += CacheLogForDebug;
-            CacheLog.LogInfoEvent += CacheLogForInfo;
-            CacheLog.LogErrorEvent += CacheLogForError;
+            ScrapyCachePool.LogDebugEvent += ScrapyCacheLogForDebug;
+            ScrapyCachePool.LogInfoEvent += ScrapyCacheLogForInfo;
+            ScrapyCachePool.LogErrorEvent += ScrapyCacheLogForError;
             //客户端缓存配置表
             cache.Get<ClientCacheConfigTable>().LoadDatas(appConfig.CacheLogConfig.基础组缓存表);
             cache.Get<ClientCacheConfigTable>().LoadDatas(appConfig.CacheLogConfig.衍生品缓存表);
@@ -112,7 +112,7 @@ namespace Engine
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="log"></param>
-        private void CacheLogForDebug(object sender, string log)
+        private void ScrapyCacheLogForDebug(string log)
         {
             Get<ILogContext>().LogForCache.LogDebug(log);
         }
@@ -121,7 +121,7 @@ namespace Engine
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="log"></param>
-        private void CacheLogForInfo(object sender, string log)
+        private void ScrapyCacheLogForInfo(string log)
         {
             Get<ILogContext>().LogForCache.LogInfo(log);
         }
@@ -130,10 +130,10 @@ namespace Engine
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="log"></param>
-        private void CacheLogForError(object sender, string log)
+        private void ScrapyCacheLogForError(string log)
         {
             Get<ILogContext>().LogForCache.LogError(log);
-        } 
+        }
         #endregion
     }
 

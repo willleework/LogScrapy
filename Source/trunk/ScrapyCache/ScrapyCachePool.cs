@@ -30,6 +30,9 @@ namespace ScrapyCache
         /// </summary>
         public void Init()
         {
+            CacheLog.LogDebugEvent += LogDebug;
+            CacheLog.LogInfoEvent += LogInfo;
+            CacheLog.LogErrorEvent += LogError;
             RegisterTables();
             InitTables();
         }

@@ -14,24 +14,24 @@ namespace Cache
         /// <summary>
         /// 注册Debug级别日志事件
         /// </summary>
-        public static EventHandler<string> LogDebugEvent;
+        public static Action<string> LogDebugEvent;
         /// <summary>
         /// 注册Info级别日志事件
         /// </summary>
-        public static EventHandler<string> LogInfoEvent;
+        public static Action<string> LogInfoEvent;
         /// <summary>
         /// 注册Error级别日志事件
         /// </summary>
-        public static EventHandler<string> LogErrorEvent;
+        public static Action<string> LogErrorEvent;
 
         /// <summary>
         /// debug级别日志
         /// </summary>
         /// <param name="log"></param>
         /// <param name="sender"></param>
-        internal static void LogDebug(string log, object sender = null)
+        internal static void LogDebug(string log)
         {
-            LogDebugEvent?.Invoke(sender, log);
+            LogDebugEvent?.Invoke(log);
         }
 
         /// <summary>
@@ -39,9 +39,9 @@ namespace Cache
         /// </summary>
         /// <param name="log"></param>
         /// <param name="sender"></param>
-        internal static void LogInfo(string log, object sender = null)
+        internal static void LogInfo(string log)
         {
-            LogInfoEvent?.Invoke(sender, log);
+            LogInfoEvent?.Invoke(log);
         }
 
         /// <summary>
@@ -49,9 +49,9 @@ namespace Cache
         /// </summary>
         /// <param name="log"></param>
         /// <param name="sender"></param>
-        internal static void LogError(string log, object sender = null)
+        internal static void LogError(string log)
         {
-            LogErrorEvent?.Invoke(sender, log);
+            LogErrorEvent?.Invoke(log);
         }
     }
 }
