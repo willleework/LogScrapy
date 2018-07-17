@@ -2,6 +2,7 @@
 using Cache;
 using Config.Entity;
 using Config.Interface;
+using Log;
 using LogUtility;
 using ScrapyCache;
 using System;
@@ -41,6 +42,7 @@ namespace Engine
             builder.RegisterType<AppConfigManage>().As<IAppConfigManage>().SingleInstance();
             builder.RegisterType<ScrapyCachePool>().As<ICachePool>().SingleInstance();
             builder.RegisterType<LogUtility.LogUtility>().As<ILogUtility>().SingleInstance();
+            builder.RegisterType<LogContext>().As<ILogContext>().SingleInstance();
 
             context = builder.Build();
         }
@@ -56,22 +58,30 @@ namespace Engine
             {
                 UserConfigPath = engineParam.AppConfigPath
             };
-            appConfig.LoadConfigs(appConfigParam); 
+            appConfig.LoadConfigs(appConfigParam);
+            #endregion
+
+            #region 日志服务初始化
+            ILogContext log = Get<ILogContext>();
+            log.Init(@engineParam.LogConfigPath);
             #endregion
 
             #region 缓存服务初始化
             ScrapyCachePool cache = Get<ICachePool>() as ScrapyCachePool;
             cache.Init();
+            CacheLog.LogDebugEvent += CacheLogForDebug;
+            CacheLog.LogInfoEvent += CacheLogForInfo;
+            CacheLog.LogErrorEvent += CacheLogForError;
             //客户端缓存配置表
             cache.Get<ClientCacheConfigTable>().LoadDatas(appConfig.CacheLogConfig.基础组缓存表);
             cache.Get<ClientCacheConfigTable>().LoadDatas(appConfig.CacheLogConfig.衍生品缓存表);
             cache.Get<ClientCacheConfigTable>().LoadDatas(appConfig.CacheLogConfig.权益缓存表);
-            cache.Get<ClientCacheConfigTable>().LoadDatas(appConfig.CacheLogConfig.基础组缓存表);
+            cache.Get<ClientCacheConfigTable>().LoadDatas(appConfig.CacheLogConfig.固收缓存表);
             //客户端缓存列配置表
             cache.Get<ClientCacheConfigColumnTable>().LoadDatas(appConfig.CacheLogConfig.基础组缓存字段表);
             cache.Get<ClientCacheConfigColumnTable>().LoadDatas(appConfig.CacheLogConfig.衍生品缓存字段表);
             cache.Get<ClientCacheConfigColumnTable>().LoadDatas(appConfig.CacheLogConfig.权益缓存字段表);
-            cache.Get<ClientCacheConfigColumnTable>().LoadDatas(appConfig.CacheLogConfig.固收缓存字段表); 
+            cache.Get<ClientCacheConfigColumnTable>().LoadDatas(appConfig.CacheLogConfig.固收缓存字段表);
             #endregion
         }
 
@@ -92,9 +102,38 @@ namespace Engine
         public T Get<T>()
         {
             return context.Resolve<T>();
-        } 
+        }
         #endregion
 
+        #region 缓存日志函数
+        /// <summary>
+        /// Debug日志
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="log"></param>
+        private void CacheLogForDebug(object sender, string log)
+        {
+            Get<ILogContext>().LogForCache.LogDebug(log);
+        }
+        /// <summary>
+        /// Info日志
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="log"></param>
+        private void CacheLogForInfo(object sender, string log)
+        {
+            Get<ILogContext>().LogForCache.LogInfo(log);
+        }
+        /// <summary>
+        /// Error日志
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="log"></param>
+        private void CacheLogForError(object sender, string log)
+        {
+            Get<ILogContext>().LogForCache.LogError(log);
+        } 
+        #endregion
     }
 
     /// <summary>
@@ -102,6 +141,13 @@ namespace Engine
     /// </summary>
     public class EngineParam
     {
+        /// <summary>
+        /// 应用程序配置文件路径
+        /// </summary>
         public string AppConfigPath { get; set; }
+        /// <summary>
+        /// 配置文件路径
+        /// </summary>
+        public string LogConfigPath { get; set; }
     }
 }

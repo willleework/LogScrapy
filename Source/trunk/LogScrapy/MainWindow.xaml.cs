@@ -36,10 +36,6 @@ namespace LogScrapy
         /// 日志文件路径
         /// </summary>
         string LogFile { get; set; }
-        /// <summary>
-        /// 客户端配置文件路径
-        /// </summary>
-        string configFile = string.Format(@"{0}\Config\logscrapyconfig.xml", Directory.GetCurrentDirectory());
         #endregion
 
 
@@ -57,14 +53,7 @@ namespace LogScrapy
         /// <param name="e"></param>
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            ScrapyEngine engine = new ScrapyEngine();
-            EngineParam param = new EngineParam()
-            {
-                AppConfigPath = @configFile
-            };
-            //耗时操作
-            engine.BootEngine(param);
-            Presenter = new LSPresenter(this, engine);
+            Presenter = new LSPresenter(this);
             QueryPageInit();
             SettingInit();
         }
@@ -126,24 +115,6 @@ namespace LogScrapy
         /// <param name="e"></param>
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            ILogUtility logUtility = Presenter.Engine.Get<ILogUtility>();
-            if (!File.Exists(LogFile))
-            {
-                MessageBox.Show("日志文件不存在");
-                return;
-            }
-            string log = logUtility.ReadLogFile(@LogFile);
-            if (string.IsNullOrWhiteSpace(log))
-            {
-                return;
-            }
-            List<LogEntityBase> logs = logUtility.DecodeLog(log, Presenter.Engine.Get<IAppConfigManage>().UserConfig.分行策略, Presenter.Engine.Get<IAppConfigManage>().UserConfig.时间戳提取策略);
-            if (logs == null || logs.Count <= 0)
-            {
-                return;
-            }
-            datas = logs;
-
             #region 获取过滤模式
             List<Regex> regexs = new List<Regex>();
             string cachePattern = Presenter.GetCachePatternByType(cmb_CacheType.Text);
@@ -169,6 +140,26 @@ namespace LogScrapy
                     regexs.Add(re);
                 }
             }
+            #endregion
+
+            #region 解析日志
+            ILogUtility logUtility = Presenter.Engine.Get<ILogUtility>();
+            if (!File.Exists(LogFile))
+            {
+                MessageBox.Show("日志文件不存在");
+                return;
+            }
+            string log = logUtility.ReadLogFile(@LogFile);
+            if (string.IsNullOrWhiteSpace(log))
+            {
+                return;
+            }
+            List<LogEntityBase> logs = logUtility.DecodeLog(log, Presenter.Engine.Get<IAppConfigManage>().UserConfig.分行策略, Presenter.Engine.Get<IAppConfigManage>().UserConfig.时间戳提取策略);
+            if (logs == null || logs.Count <= 0)
+            {
+                return;
+            }
+            datas = logs; 
             #endregion
 
             ObservableCollection<LogEntityBase> logEntities = new ObservableCollection<LogEntityBase>(datas.Where(p => Presenter.CheckPattern(regexs, p.DataInfo)));
@@ -265,7 +256,7 @@ namespace LogScrapy
         private void SaveSetting_Click(object sender, RoutedEventArgs e)
         {
             SaveSetting();
-            UserAppConfigParam config = new UserAppConfigParam() { ConfigPath = @configFile };
+            UserAppConfigParam config = new UserAppConfigParam() { ConfigPath = @Presenter.AppConfigFile };
             Presenter.Engine.Get<IAppConfigManage>().UserConfig.SaveConfigs(config);
         }
 

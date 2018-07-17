@@ -57,8 +57,10 @@
     <Compile Include="ConfigUnitTest.cs" />
     <Compile Include="CacheUnitTest.cs" />
     <Compile Include="ScrapyCacheUnitTest.cs" />
+    <Compile Include="LogUnitTest.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -77,6 +79,10 @@
     <ProjectReference Include="..\Engine\Engine.csproj">
       <Project>{683C3BF1-962D-4A57-80C4-0AF7B2946144}</Project>
       <Name>Engine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Log\Log.csproj">
+      <Project>{FE081245-DC3D-42D9-9973-393BDF2559D8}</Project>
+      <Name>Log</Name>
     </ProjectReference>
     <ProjectReference Include="..\ScrapyCache\ScrapyCache.csproj">
       <Project>{C834C7B8-30CE-4C03-8B12-042DA28F0A20}</Project>

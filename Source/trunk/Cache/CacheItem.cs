@@ -15,5 +15,14 @@ namespace Cache
         public virtual void Copy(ICacheItem des)
         {
         }
+
+        /// <summary>
+        /// 返回类信息字符串
+        /// </summary>
+        /// <returns></returns>
+        public virtual string ToString()
+        {
+            return "";
+        }
     }
 }

@@ -33,5 +33,14 @@ namespace ScrapyCache
             model.数据类型 = this.数据类型;
             model.主键 = this.主键;
         }
+
+        /// <summary>
+        /// 类信息
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return string.Format("[ClientCacheConfigColumn]表名:{0}, 标准字段:{1}", this.表名, this.标准字段);
+        }
     }
 }

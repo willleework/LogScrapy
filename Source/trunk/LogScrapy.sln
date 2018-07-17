@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogUtility", "LogUtility\Lo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScrapyCache", "ScrapyCache\ScrapyCache.csproj", "{C834C7B8-30CE-4C03-8B12-042DA28F0A20}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Log", "Log\Log.csproj", "{FE081245-DC3D-42D9-9973-393BDF2559D8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,10 @@ Global
 		{C834C7B8-30CE-4C03-8B12-042DA28F0A20}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C834C7B8-30CE-4C03-8B12-042DA28F0A20}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C834C7B8-30CE-4C03-8B12-042DA28F0A20}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE081245-DC3D-42D9-9973-393BDF2559D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE081245-DC3D-42D9-9973-393BDF2559D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE081245-DC3D-42D9-9973-393BDF2559D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE081245-DC3D-42D9-9973-393BDF2559D8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

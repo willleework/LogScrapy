@@ -6,6 +6,7 @@ using ScrapyCache;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -18,6 +19,15 @@ namespace LogScrapy
     /// </summary>
     public class LSPresenter
     {
+        /// <summary>
+        /// 客户端配置文件路径
+        /// </summary>
+        string appConfigFile = string.Format(@"{0}\Config\logscrapyconfig.xml", Directory.GetCurrentDirectory());
+        string logConfigFile = string.Format(@"{0}\Config\ScrapyLog.config", Directory.GetCurrentDirectory());
+
+        public string AppConfigFile { get => appConfigFile; }
+        public string LogConfigFile { get => logConfigFile; }
+
         /// <summary>
         /// 框架引擎
         /// </summary>
@@ -33,8 +43,16 @@ namespace LogScrapy
         /// </summary>
         /// <param name="view"></param>
         /// <param name="engine"></param>
-        public LSPresenter(MainWindow view, ScrapyEngine engine)
+        public LSPresenter(MainWindow view)
         {
+            ScrapyEngine engine = new ScrapyEngine();
+            EngineParam param = new EngineParam()
+            {
+                AppConfigPath = AppConfigFile,
+                LogConfigPath = LogConfigFile,
+            };
+            //耗时操作
+            engine.BootEngine(param);
             Engine = engine;
             View = view;
         }
@@ -46,7 +64,7 @@ namespace LogScrapy
         /// <returns></returns>
         public string GetCachePatternByType(string cacheType)
         {
-            CachePattern pattern = Engine.Get<IAppConfigManage>().UserConfig.缓存匹配策略列表.Find(p => p.CacheType.Equals(cacheType));
+            CachePattern pattern = Engine.Get<IAppConfigManage>().UserConfig.缓存匹配策略列表.Find(p => p.CacheType!=null?p.CacheType.Equals(cacheType):false);
             if (pattern != null)
             {
                 return pattern.Pattern;

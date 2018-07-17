@@ -16,5 +16,10 @@ namespace Cache
         /// </summary>
         /// <param name="item"></param>
         void Copy(ICacheItem des);
+        /// <summary>
+        /// 获取字符串
+        /// </summary>
+        /// <returns></returns>
+        string ToString();
     }
 }

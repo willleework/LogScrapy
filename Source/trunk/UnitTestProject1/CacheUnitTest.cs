@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Cache;
+using Log;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTestProject1
@@ -8,6 +9,7 @@ namespace UnitTestProject1
     [TestClass]
     public class CacheUnitTest
     {
+        LogJet log1 = new LogJet("ceshi2", @"D:/Log/App.config");
         public interface ITestCache
         {
             int ID { get; set; }
@@ -155,10 +157,16 @@ namespace UnitTestProject1
         }
 
         [TestMethod]
-        public void CacheAdd()
+        public void CacheLogTest()
         {
             //TestCacheModel model = new TestCacheModel();
+            CacheLog.LogErrorEvent += LogInfo;
+            _pool.Get<TestTable>()?.Add(null);
+        }
 
+        private void LogInfo(object sender, string log)
+        {
+            log1.LogInfo(log);
         }
     }
 }

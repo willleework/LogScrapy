@@ -34,5 +34,14 @@ namespace ScrapyCache
             model.后台组 = this.后台组;
             model.数据库表名 = this.数据库表名;
         }
+
+        /// <summary>
+        /// 类信息
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return string.Format("[ClientCacheConfig]英文名称:{0}, 表名:{1}", this.英文名, this.表名);
+        }
     }
 }

@@ -11,10 +11,17 @@ namespace Cache
     /// </summary>
     public class CacheLog
     {
+        /// <summary>
+        /// 注册Debug级别日志事件
+        /// </summary>
         public static EventHandler<string> LogDebugEvent;
-
+        /// <summary>
+        /// 注册Info级别日志事件
+        /// </summary>
         public static EventHandler<string> LogInfoEvent;
-
+        /// <summary>
+        /// 注册Error级别日志事件
+        /// </summary>
         public static EventHandler<string> LogErrorEvent;
 
         /// <summary>

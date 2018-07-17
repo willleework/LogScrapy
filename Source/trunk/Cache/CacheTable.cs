@@ -48,6 +48,7 @@ namespace Cache
             {
                 if (_indexDiction.ContainsKey(index.IndexName))
                 {
+                    CacheLog.LogError(string.Format("尝试添加重复的索引【{0}】{1}，表【{2}】", index.IndexName, index.IndexType, this.TableName));
                     throw new Exception(string.Format("索引名称重复：{0}", index.IndexName));
                 }
                 _indexDiction[index.IndexName] = index;
@@ -60,6 +61,7 @@ namespace Cache
                     }
                     else
                     {
+                        CacheLog.LogError(string.Format("尝试重复添加唯一索引【{0}】（原{1}），表【{2}】", index.IndexName, _uniqueIndex.IndexName, this.TableName));
                         throw new Exception(string.Format("唯一索引已存在：{0}，重复设置值：{1}", _uniqueIndex.IndexName, index.IndexName));
                     }
                 }
@@ -104,18 +106,26 @@ namespace Cache
         /// <returns></returns>
         public List<ICacheItem> Get(string key = "", string indexName = "")
         {
-            CheckUniqueIndex();
-            if (string.IsNullOrWhiteSpace(indexName))
+            try
             {
-                indexName = _uniqueIndex.IndexName;
-            }
-            List<ICacheItem> datas = new List<ICacheItem>();
-            if (!_dataRegion.ContainsKey(indexName))
-            {
+                CheckUniqueIndex();
+                if (string.IsNullOrWhiteSpace(indexName))
+                {
+                    indexName = _uniqueIndex.IndexName;
+                }
+                List<ICacheItem> datas = new List<ICacheItem>();
+                if (!_dataRegion.ContainsKey(indexName))
+                {
+                    return datas;
+                }
+                datas = _dataRegion[indexName].Get(key);
                 return datas;
             }
-            datas = _dataRegion[indexName].Get(key);
-            return datas;
+            catch (Exception ex)
+            {
+                CacheLog.LogError(string.Format("{0}, 表【{1}】", ex.Message, TableName));
+                throw ex;
+            }
         }
 
         /// <summary>
@@ -129,12 +139,20 @@ namespace Cache
         /// <returns></returns>
         public List<ICacheItem> GetOrAdd(string key, ICacheItem item = null, string indexName = "")
         {
-            List<ICacheItem> datas = Get(key, indexName);
-            if (datas.Count <= 0 && item!= null)
+            try
             {
-                Add(item);
+                List<ICacheItem> datas = Get(key, indexName);
+                if (datas.Count <= 0 && item != null)
+                {
+                    Add(item);
+                }
+                return datas;
             }
-            return datas;
+            catch (Exception ex)
+            {
+                CacheLog.LogError(string.Format("{0}, 表【{1}】", ex.Message, TableName));
+                throw ex;
+            }
         }
 
         /// <summary>
@@ -145,14 +163,27 @@ namespace Cache
         /// <returns></returns>
         public ICacheItem Add(ICacheItem item)
         {
-            CheckUniqueIndex();
-            lock (_tableLock)
+            try
             {
-                foreach (ICacheIndex index in _indexs)
+                if (item == null)
                 {
-                    _dataRegion[index.IndexName].Add(item);
+                    return null;
                 }
-                return item;
+                CheckUniqueIndex();
+                lock (_tableLock)
+                {
+                    foreach (ICacheIndex index in _indexs)
+                    {
+                        _dataRegion[index.IndexName].Add(item);
+                        //TODO: 此处如果有一个索引失败，都要回滚
+                    }
+                    return item;
+                }
+            }
+            catch (Exception ex)
+            {
+                CacheLog.LogError(string.Format("{0}, 表【{1}】", ex.Message, TableName));
+                throw ex;
             }
         }
 
@@ -164,16 +195,28 @@ namespace Cache
         /// <returns></returns>
         public ICacheItem Update(ICacheItem item)
         {
-            CheckUniqueIndex();
-            string uniqueKey = _uniqueIndex.GetIndexKey(item);
-
-            List<ICacheItem> datas = Get(uniqueKey);
-            if (datas.Count <= 0)
+            try
             {
-                return null;
+                if (item == null)
+                {
+                    return null;
+                }
+                CheckUniqueIndex();
+                string uniqueKey = _uniqueIndex.GetIndexKey(item);
+
+                List<ICacheItem> datas = Get(uniqueKey);
+                if (datas.Count <= 0)
+                {
+                    return null;
+                }
+                item.Copy(datas[0]);
+                return datas[0];
             }
-            item.Copy(datas[0]);
-            return datas[0];
+            catch (Exception ex)
+            {
+                CacheLog.LogError(string.Format("{0}, 表【{1}】", ex.Message, TableName));
+                throw ex;
+            }
         }
 
         /// <summary>
@@ -185,14 +228,26 @@ namespace Cache
         /// <returns></returns>
         public ICacheItem Remove(ICacheItem item)
         {
-            CheckUniqueIndex();
-            lock (_tableLock)
+            try
             {
-                foreach (ICacheIndex index in _indexs)
+                if (item == null)
                 {
-                    _dataRegion[index.IndexName].Remove(item);
+                    return null;
                 }
-                return item;
+                CheckUniqueIndex();
+                lock (_tableLock)
+                {
+                    foreach (ICacheIndex index in _indexs)
+                    {
+                        _dataRegion[index.IndexName].Remove(item);
+                    }
+                    return item;
+                }
+            }
+            catch (Exception ex)
+            {
+                CacheLog.LogError(string.Format("{0}, 表【{1}】", ex.Message, TableName));
+                throw ex;
             }
         }
 
@@ -203,7 +258,9 @@ namespace Cache
         {
             if (_uniqueIndex == null)
             {
-                throw new Exception(string.Format("缓存表【{0}】主键不存在错误", TableName));
+                string errorInfo = string.Format("缓存表【{0}】主键不存在错误", TableName);
+                CacheLog.LogError(errorInfo);
+                throw new Exception(errorInfo);
             }
         }
     }

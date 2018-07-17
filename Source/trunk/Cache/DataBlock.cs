@@ -63,7 +63,6 @@ namespace Cache
                 _blockLock.EnterUpgradeableReadLock();
                 if (_uniqueBlock.ContainsKey(uniqueKey))
                 {
-                    _blockLock.ExitUpgradeableReadLock();
                     throw new Exception(string.Format("索引重复，数据已存在：唯一索引:{0}，区块索引:{1}", uniqueKey, blockKey));
                 }
                 try
@@ -76,6 +75,7 @@ namespace Cache
                     _block[blockKey].Add(item);
                     _uniqueBlock.Add(uniqueKey, item);
                     _datas.Add(item);
+                    CacheLog.LogDebug(string.Format("添加数据：{0}", item.ToString()));
                 }
                 catch (Exception ex)
                 {
@@ -143,7 +143,6 @@ namespace Cache
                 _blockLock.EnterUpgradeableReadLock();
                 if (!_uniqueBlock.ContainsKey(uniqueKey))
                 {
-                    _blockLock.ExitUpgradeableReadLock();
                     return null;
                 }
                 try
@@ -193,7 +192,6 @@ namespace Cache
                 _blockLock.EnterUpgradeableReadLock();
                 if (!_uniqueBlock.ContainsKey(uniqueKey))
                 {
-                    _blockLock.ExitUpgradeableReadLock();
                     return null;
                 }
                 try

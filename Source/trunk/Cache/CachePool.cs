@@ -26,7 +26,8 @@ namespace Cache
             int tableHash = typeof(TCacheTable).GetHashCode();
             if (!_cacheTables.ContainsKey(tableHash))
             {
-                throw new Exception("不存在的缓存表");
+                CacheLog.LogError(string.Format("尝试访问不存在的表【{0}】", typeof(TCacheTable)));
+                return null;
             }
             return _cacheTables[tableHash] as TCacheTable;
         }
@@ -43,12 +44,14 @@ namespace Cache
             int tableHash = typeof(TCacheTable).GetHashCode();
             if (_cacheTables.ContainsKey(tableHash))
             {
+                CacheLog.LogError(string.Format("表已存在【{0}】", typeof(TCacheTable)));
                 return;
             }
             lock (tableLock)
             {
                 if (_cacheTables.ContainsKey(tableHash))
                 {
+                    CacheLog.LogError(string.Format("表已存在【{0}】", typeof(TCacheTable)));
                     return;
                 }
                 _cacheTables[tableHash] = new TCacheTable();
