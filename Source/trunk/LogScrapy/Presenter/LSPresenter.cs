@@ -2,6 +2,7 @@
 using Config.Entity;
 using Config.Interface;
 using Engine;
+using Log;
 using ScrapyCache;
 using System;
 using System.Collections.Generic;
@@ -111,7 +112,7 @@ namespace LogScrapy
             }
             catch (Exception ex)
             {
-                throw new Exception("获取缓存表信息失败", ex);
+                Engine.Get<ILogContext>().LogForCommon.LogError(string.Format("获取缓存表信息失败：{0};StackTrace:{1}", ex.Message, ex.StackTrace));
             }
             return types;
         }
@@ -139,7 +140,7 @@ namespace LogScrapy
             }
             catch (Exception ex)
             {
-                //TODO: 异常处理
+                Engine.Get<ILogContext>().LogForCommon.LogError(string.Format("获取缓存表列信息失败：{0};StackTrace:{1}", ex.Message, ex.StackTrace));
             }
             return columns;
         }

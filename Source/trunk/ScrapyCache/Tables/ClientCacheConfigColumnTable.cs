@@ -105,7 +105,7 @@ namespace ScrapyCache
                 }
                 catch (Exception ex)
                 {
-                    //TODO: 异常处理
+                    ScrapyCachePool.LogError(string.Format("【客户端缓存列信息表】数据加载错误：{0};StackTrace:{1}", ex.Message, ex.StackTrace));
                 }
             }
         }

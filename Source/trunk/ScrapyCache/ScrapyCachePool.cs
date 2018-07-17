@@ -12,7 +12,18 @@ namespace ScrapyCache
     /// </summary>
     public class ScrapyCachePool: CachePool
     {
-        //private static CachePool _pool = new CachePool();
+        /// <summary>
+        /// Debug级别日志 
+        /// </summary>
+        public static Action<string> LogDebugEvent;
+        /// <summary>
+        /// Info级别日志
+        /// </summary>
+        public static Action<string> LogInfoEvent;
+        /// <summary>
+        /// Error级别日志
+        /// </summary>
+        public static Action<string> LogErrorEvent;
 
         /// <summary>
         /// 数据池初始化
@@ -41,6 +52,36 @@ namespace ScrapyCache
             cacheConfig.Init();
             ClientCacheConfigColumnTable cacheColumnConfig = this.Get<ClientCacheConfigColumnTable>();
             cacheColumnConfig.Init();
+        }
+
+        /// <summary>
+        /// debug级别日志
+        /// </summary>
+        /// <param name="log"></param>
+        /// <param name="sender"></param>
+        internal static void LogDebug(string log)
+        {
+            LogDebugEvent?.Invoke(log);
+        }
+
+        /// <summary>
+        /// Info级别日志
+        /// </summary>
+        /// <param name="log"></param>
+        /// <param name="sender"></param>
+        internal static void LogInfo(string log)
+        {
+            LogInfoEvent?.Invoke(log);
+        }
+
+        /// <summary>
+        /// Error级别日志
+        /// </summary>
+        /// <param name="log"></param>
+        /// <param name="sender"></param>
+        internal static void LogError(string log)
+        {
+            LogErrorEvent?.Invoke(log);
         }
     }
 }

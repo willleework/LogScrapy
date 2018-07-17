@@ -61,7 +61,7 @@ namespace Config.Entity
             }
             catch (Exception ex)
             {
-                //TODO: 错误需要日志
+                AppConfigManage.LogError(string.Format("加载用户应用程序配置错误：{0};StackTrace:{1}", ex.Message, ex.StackTrace));
                 Init();
             }
         }
