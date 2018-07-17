@@ -1,7 +1,7 @@
 ﻿using Config.Entity;
 using Config.Interface;
 using Engine;
-using LogUtility;
+using LogDecode;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

@@ -58,9 +58,9 @@
       <Project>{2DC481E4-CF76-4FD9-8FAA-AD57A9255CB5}</Project>
       <Name>Config</Name>
     </ProjectReference>
-    <ProjectReference Include="..\LogUtility\LogUtility.csproj">
+    <ProjectReference Include="..\LogUtility\LogDecode.csproj">
       <Project>{E9342047-D6A2-4613-A02B-66BE0BC41A88}</Project>
-      <Name>LogUtility</Name>
+      <Name>LogDecode</Name>
     </ProjectReference>
     <ProjectReference Include="..\Log\Log.csproj">
       <Project>{FE081245-DC3D-42D9-9973-393BDF2559D8}</Project>

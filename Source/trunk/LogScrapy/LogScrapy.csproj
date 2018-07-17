@@ -115,9 +115,9 @@
       <Project>{683C3BF1-962D-4A57-80C4-0AF7B2946144}</Project>
       <Name>Engine</Name>
     </ProjectReference>
-    <ProjectReference Include="..\LogUtility\LogUtility.csproj">
+    <ProjectReference Include="..\LogUtility\LogDecode.csproj">
       <Project>{E9342047-D6A2-4613-A02B-66BE0BC41A88}</Project>
-      <Name>LogUtility</Name>
+      <Name>LogDecode</Name>
     </ProjectReference>
     <ProjectReference Include="..\ScrapyCache\ScrapyCache.csproj">
       <Project>{C834C7B8-30CE-4C03-8B12-042DA28F0A20}</Project>

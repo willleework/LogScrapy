@@ -7,8 +7,8 @@
     <ProjectGuid>{E9342047-D6A2-4613-A02B-66BE0BC41A88}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>LogUtility</RootNamespace>
-    <AssemblyName>LogUtility</AssemblyName>
+    <RootNamespace>LogDecode</RootNamespace>
+    <AssemblyName>LogDecode</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

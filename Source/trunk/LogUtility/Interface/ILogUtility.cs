@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LogUtility
+namespace LogDecode
 {
     /// <summary>
     /// 日志辅助类

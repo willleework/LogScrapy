@@ -40,7 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Entity\AppConfigManage.cs" />
+    <Compile Include="AppConfigManage.cs" />
     <Compile Include="Entity\ConfigParam.cs" />
     <Compile Include="Entity\CacheLogConfig.cs" />
     <Compile Include="Entity\UserAppConfig.cs" />

@@ -19,7 +19,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Config", "Config\Config.csproj", "{2DC481E4-CF76-4FD9-8FAA-AD57A9255CB5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogUtility", "LogUtility\LogUtility.csproj", "{E9342047-D6A2-4613-A02B-66BE0BC41A88}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogDecode", "LogUtility\LogDecode.csproj", "{E9342047-D6A2-4613-A02B-66BE0BC41A88}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScrapyCache", "ScrapyCache\ScrapyCache.csproj", "{C834C7B8-30CE-4C03-8B12-042DA28F0A20}"
 EndProject
