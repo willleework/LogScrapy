@@ -9,5 +9,6 @@ namespace LogScrapy
 {
     public class LSDataGrid : Control
     {
+        
     }
 }

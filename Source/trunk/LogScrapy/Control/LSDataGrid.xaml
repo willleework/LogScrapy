@@ -26,10 +26,10 @@
                                   AutoGenerateColumns="False" 
                                   HorizontalAlignment="Stretch"
                                   VerticalAlignment="Stretch">
-                            <DataGrid.Columns>
+                            <!--<DataGrid.Columns>
                                 <DataGridTextColumn Header="时间戳" Width="200" IsReadOnly="True"/>
                                 <DataGridTextColumn Header="级别" Width="100" IsReadOnly="True"/>
-                            </DataGrid.Columns>
+                            </DataGrid.Columns>-->
                         </DataGrid>
                     </Grid>
                 </ControlTemplate>
