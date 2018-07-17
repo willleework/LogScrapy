@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 namespace LogDecode
 {
     /// <summary>
-    /// 日志辅助类
+    /// 日志解析辅助类
     /// </summary>
-    public class LogUtility : ILogUtility
+    public class LogDecodeUtility : ILogUtility
     {
         /// <summary>
         /// 读取配置文件

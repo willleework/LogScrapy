@@ -42,7 +42,7 @@ namespace Engine
             var builder = new ContainerBuilder();
             builder.RegisterType<AppConfigManage>().As<IAppConfigManage>().SingleInstance();
             builder.RegisterType<ScrapyCachePool>().As<ICachePool>().SingleInstance();
-            builder.RegisterType<LogUtility>().As<ILogUtility>().SingleInstance();
+            builder.RegisterType<LogDecodeUtility>().As<ILogUtility>().SingleInstance();
             builder.RegisterType<LogContext>().As<ILogContext>().SingleInstance();
 
             context = builder.Build();
