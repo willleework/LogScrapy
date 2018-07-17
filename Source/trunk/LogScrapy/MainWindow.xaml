@@ -17,7 +17,7 @@
             <ColumnDefinition Width="236*"/>
             <ColumnDefinition Width="27*"/>
         </Grid.ColumnDefinitions>-->
-        <TabControl HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Stretch" Grid.ColumnSpan="2">
+        <TabControl HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <!--监控界面-->
             <TabItem Header="监控界面">
                 <Grid Background="#FFE5E5E5">
@@ -159,6 +159,12 @@
                         <Grid.RowDefinitions></Grid.RowDefinitions>
                         <Button Grid.Row="0" HorizontalAlignment="Right" Height="30" Width="100" Click="SaveSetting_Click">保存配置</Button>
                     </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="测试界面">
+                <Grid>
+                    <local:LSDataGrid Height="500" Width="500">
+                    </local:LSDataGrid>
                 </Grid>
             </TabItem>
         </TabControl>
