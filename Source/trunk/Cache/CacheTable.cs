@@ -123,7 +123,7 @@ namespace Cache
             }
             catch (Exception ex)
             {
-                CacheLog.LogError(string.Format("{0}, 表【{1}】", ex.Message, TableName));
+                CacheLog.LogError(string.Format("查询表数据失败：{0}, 表【{1}】;StackTrace:{2}", ex.Message, TableName, ex.StackTrace != null ? ex.StackTrace : ""));
                 throw ex;
             }
         }
@@ -150,7 +150,7 @@ namespace Cache
             }
             catch (Exception ex)
             {
-                CacheLog.LogError(string.Format("{0}, 表【{1}】", ex.Message, TableName));
+                CacheLog.LogError(string.Format("向表查询添加数据失败：{0}, 表【{1}】;StackTrace:{2}", ex.Message, TableName, ex.StackTrace!=null? ex.StackTrace:""));
                 throw ex;
             }
         }
@@ -182,7 +182,7 @@ namespace Cache
             }
             catch (Exception ex)
             {
-                CacheLog.LogError(string.Format("{0}, 表【{1}】", ex.Message, TableName));
+                CacheLog.LogError(string.Format("向表添加数据失败：{0}, 表【{1}】;StackTrace:{2}", ex.Message, TableName, ex.StackTrace != null ? ex.StackTrace : ""));
                 throw ex;
             }
         }
@@ -214,7 +214,7 @@ namespace Cache
             }
             catch (Exception ex)
             {
-                CacheLog.LogError(string.Format("{0}, 表【{1}】", ex.Message, TableName));
+                CacheLog.LogError(string.Format("更新表数据失败：{0}, 表【{1}】;StackTrace:{2}", ex.Message, TableName, ex.StackTrace != null ? ex.StackTrace : ""));
                 throw ex;
             }
         }
@@ -246,7 +246,31 @@ namespace Cache
             }
             catch (Exception ex)
             {
-                CacheLog.LogError(string.Format("{0}, 表【{1}】", ex.Message, TableName));
+                CacheLog.LogError(string.Format("删除表数据失败：{0}, 表【{1}】;StackTrace:{2}", ex.Message, TableName, ex.StackTrace != null ? ex.StackTrace : ""));
+                throw ex;
+            }
+        }
+
+        /// <summary>
+        /// 清空表数据
+        /// </summary>
+        public void Clear()
+        {
+            try
+            {
+                CheckUniqueIndex();
+                lock (_tableLock)
+                {
+                    foreach (ICacheIndex index in _indexs)
+                    {
+                        _dataRegion[index.IndexName].Clear();
+                        //TODO: 此处如果有一个索引失败，都要回滚
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                CacheLog.LogError(string.Format("执行清表操作失败：{0}, 表【{1}】;StackTrace:{2}", ex.Message, TableName, ex.StackTrace != null ? ex.StackTrace : ""));
                 throw ex;
             }
         }

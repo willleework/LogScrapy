@@ -7,6 +7,7 @@ using ScrapyCache;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -143,6 +144,53 @@ namespace LogScrapy
                 Engine.Get<ILogContext>().LogForCommon.LogError(string.Format("获取缓存表列信息失败：{0};StackTrace:{1}", ex.Message, ex.StackTrace));
             }
             return columns;
+        }
+
+        /// <summary>
+        /// 根据匹配模式获取动态类型日志信息列表
+        /// </summary>
+        /// <param name="regexs"></param>
+        /// <param name="cacheType"></param>
+        /// <returns></returns>
+        public List<dynamic> GetLogInfoRowsByRegFilters(List<Regex> regexs, string cacheType)
+        {
+            List<ICacheItem> logs = new List<ICacheItem>();
+            List<LogInfoRow> infoRows = new List<LogInfoRow>();
+            List<dynamic> results = new List<dynamic>();
+            try
+            {
+                logs = Engine.Get<ICachePool>().Get<LogInfoRowTable>().Get();
+                List<string> columns = GetCacheColumn(cacheType);
+                //regexs.Clear();
+                logs.AsParallel().ForAll(p =>
+                {
+                    LogInfoRow row = p as LogInfoRow;
+                    if (regexs.Count <= 0 || CheckPattern(regexs, row.DataInfo))
+                    {
+                        dynamic obj = new ExpandoObject();
+                        ((IDictionary<string, object>)obj).Add("TimeStamp", row.TimeStamp);
+                        ((IDictionary<string, object>)obj).Add("Level", row.Level);
+                        foreach (string column in columns)
+                        {
+                            string value = string.Empty;
+                            string reg = string.Format("{0}={1}", column, @"\w+\,");
+                            Regex r = new Regex(@reg);
+                            MatchCollection m = r.Matches(row.DataInfo);
+                            if (m.Count > 0)
+                            {
+                                value = m[0].Value.Remove(0, column.Length + 1).TrimEnd(',');
+                            }
+                            ((IDictionary<string, object>)obj).Add(column, value);
+                        }
+                        results.Add(obj);
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                Engine.Get<ILogContext>().LogForCommon.LogError(string.Format("筛选日志信息失败：{0};StackTrace:{1}", ex.Message, ex.StackTrace));
+            }
+            return results;
         }
     }
 }

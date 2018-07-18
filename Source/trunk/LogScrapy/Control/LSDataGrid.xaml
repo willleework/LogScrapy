@@ -9,12 +9,12 @@
                         
                     </ControlTemplate.Resources>
                     <Grid>
-                        <!--<Grid.RowDefinitions>
-                            <RowDefinition></RowDefinition>
-                            <RowDefinition></RowDefinition>
-                            <RowDefinition></RowDefinition>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="1"></RowDefinition>
+                            <RowDefinition Height="*"></RowDefinition>
+                            <RowDefinition Height="1"></RowDefinition>
                         </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
+                        <!--<Grid.ColumnDefinitions>
                             <ColumnDefinition></ColumnDefinition>
                             <ColumnDefinition></ColumnDefinition>
                             <ColumnDefinition></ColumnDefinition>
@@ -26,10 +26,6 @@
                                   AutoGenerateColumns="False" 
                                   HorizontalAlignment="Stretch"
                                   VerticalAlignment="Stretch">
-                            <!--<DataGrid.Columns> 
-                                <DataGridTextColumn Header="时间戳" Width="200" IsReadOnly="True"/>
-                                <DataGridTextColumn Header="级别" Width="100" IsReadOnly="True"/>
-                            </DataGrid.Columns>-->
                         </DataGrid>
                     </Grid>
                 </ControlTemplate>

@@ -46,9 +46,12 @@
     <Compile Include="TableItem\ClientCacheConfigColumn.cs" />
     <Compile Include="TableItem\Interface\IClientCacheConfig.cs" />
     <Compile Include="TableItem\Interface\IClientCacheConfigColumn.cs" />
+    <Compile Include="TableItem\Interface\ILogInfoRow.cs" />
+    <Compile Include="TableItem\LogInfoRow.cs" />
     <Compile Include="Tables\ClientCacheConfigColumnTable.cs" />
     <Compile Include="Tables\ClientCacheConfigTable.cs" />
     <Compile Include="Tables\Interface\IScrapyCacheTable.cs" />
+    <Compile Include="Tables\LogInfoRowTable.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Cache\Cache.csproj">

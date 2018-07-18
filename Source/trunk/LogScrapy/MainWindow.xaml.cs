@@ -1,10 +1,14 @@
-﻿using Config.Entity;
+﻿using Cache;
+using Config.Entity;
 using Config.Interface;
 using Engine;
 using LogDecode;
+using ScrapyCache;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -84,10 +88,36 @@ namespace LogScrapy
             rtx_FilterPattern.Document.Blocks.Add(p);
         }
 
-        private void AddColumn_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// 生成列事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="datas"></param>
+        private void GenerateColumns(object sender, IEnumerable datas)
         {
-            grid.InitColumns(); 
+            List<string> columns = Presenter.GetCacheColumn(cmb_CacheType.Text);
+            DataGrid grid = (DataGrid)sender;
+            grid.ItemsSource = null;
+            grid.Columns.Clear();
+            grid.Columns.Add(new DataGridTextColumn()
+            {
+                Header = "时间戳",
+                Binding = new Binding("TimeStamp"),
+            });
+            grid.Columns.Add(new DataGridTextColumn()
+            {
+                Header = "日志级别",
+                Binding = new Binding("Level"),
+            });
+            foreach (string column in columns)
+            {
+                DataGridTextColumn gridcolumn = new DataGridTextColumn();
+                gridcolumn.Header = column;
+                gridcolumn.Binding = new Binding(column);
+                grid.Columns.Add(gridcolumn);
+            }
         }
+
     }
 
     /// <summary>
@@ -111,10 +141,11 @@ namespace LogScrapy
         private void QueryPageInit()
         {
             cmb_CacheType.ItemsSource = new ObservableCollection<string>(Presenter.GetCacheType());
+            dataGrid.GeneratingColumnsEvent += GenerateColumns;
         }
 
         /// <summary>
-        /// 查询数据
+        /// 查询日志数据
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -147,28 +178,7 @@ namespace LogScrapy
             }
             #endregion
 
-            #region 解析日志
-            ILogUtility logUtility = Presenter.Engine.Get<ILogUtility>();
-            if (!File.Exists(LogFile))
-            {
-                MessageBox.Show("日志文件不存在");
-                return;
-            }
-            string log = logUtility.ReadLogFile(@LogFile);
-            if (string.IsNullOrWhiteSpace(log))
-            {
-                return;
-            }
-            List<LogEntityBase> logs = logUtility.DecodeLog(log, Presenter.Engine.Get<IAppConfigManage>().UserConfig.分行策略, Presenter.Engine.Get<IAppConfigManage>().UserConfig.时间戳提取策略);
-            if (logs == null || logs.Count <= 0)
-            {
-                return;
-            }
-            datas = logs; 
-            #endregion
-
-            ObservableCollection<LogEntityBase> logEntities = new ObservableCollection<LogEntityBase>(datas.Where(p => Presenter.CheckPattern(regexs, p.DataInfo)));
-            dataGrid.ItemsSource = logEntities;
+            dataGrid.DataSource = Presenter.GetLogInfoRowsByRegFilters(regexs, cmb_CacheType.Text);
         }
 
         /// <summary>
@@ -197,7 +207,7 @@ namespace LogScrapy
         {
             ObservableCollection<string> columns;
             string cacheType = (string)cmb_CacheType.SelectedItem;
-            
+
             if (string.IsNullOrWhiteSpace(cacheType))
             {
                 columns = new ObservableCollection<string>();
@@ -207,6 +217,42 @@ namespace LogScrapy
                 columns = new ObservableCollection<string>(Presenter.GetCacheColumn(cacheType));
             }
             cmb_CacheColumn.ItemsSource = columns;
+        }
+
+        /// <summary>
+        /// 加载日志信息到本地缓存
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void LoadLogsToCache_Click(object sender, RoutedEventArgs e)
+        {
+            ILogUtility logUtility = Presenter.Engine.Get<ILogUtility>();
+            if (!File.Exists(LogFile))
+            {
+                MessageBox.Show("日志文件不存在");
+                return;
+            }
+            string logInfo = logUtility.ReadLogFile(@LogFile);
+            if (string.IsNullOrWhiteSpace(logInfo))
+            {
+                return;
+            }
+            List<LogEntityBase> logs = logUtility.DecodeLog(logInfo, Presenter.Engine.Get<IAppConfigManage>().UserConfig.分行策略, Presenter.Engine.Get<IAppConfigManage>().UserConfig.时间戳提取策略);
+            if (logs == null || logs.Count <= 0)
+            {
+                return;
+            }
+            List<LogInfoRow> logRows = new List<LogInfoRow>();
+            foreach (LogEntityBase log in logs)
+            {
+                logRows.Add(new LogInfoRow()
+                {
+                    Level = log.Level,
+                    TimeStamp = log.TimeStamp,
+                    DataInfo = log.DataInfo,
+                });
+            }
+            Presenter.Engine.Get<ICachePool>().Get<LogInfoRowTable>().LoadDatas(logRows);
         }
     }
 
@@ -297,6 +343,100 @@ namespace LogScrapy
                 tb_derCacheSettingFile.Text = ofd.FileName;
                 Presenter.Engine.Get<IAppConfigManage>().UserConfig.衍生品缓存配置目录 = ofd.FileName;
             }
+        }
+    }
+
+    /// <summary>
+    /// 测试界面
+    /// </summary>
+    public partial class MainWindow
+    {
+        private void AddEvent_Click(object sender, RoutedEventArgs e)
+        {
+            this.gridTest.GeneratingColumnsEvent += GenerateColumns;
+        }
+
+
+        private void AddColumn_Click(object sender, RoutedEventArgs e)
+        {
+            //#region 获取过滤模式
+            //List<Regex> regexs = new List<Regex>();
+            //string cachePattern = Presenter.GetCachePatternByType(cmb_CacheType.Text);
+            //if (!string.IsNullOrWhiteSpace(cachePattern))
+            //{
+            //    Regex regCachePattern = new Regex(@cachePattern);
+            //    regexs.Add(regCachePattern);
+            //}
+            //else
+            //{
+            //    MessageBox.Show("没有配置当前缓存对应的匹配策略");
+            //    return;
+            //}
+
+            //TextRange textRange = new TextRange(rtx_FilterPattern.Document.ContentStart, rtx_FilterPattern.Document.ContentEnd);
+            //string filterPattern = textRange.Text.TrimEnd();
+            //if (!string.IsNullOrWhiteSpace(filterPattern))
+            //{
+            //    string[] patterns = filterPattern.Split(new char[] { ',', '，' });
+            //    foreach (string pat in patterns)
+            //    {
+            //        Regex re = new Regex(@pat);
+            //        regexs.Add(re);
+            //    }
+            //}
+            //#endregion
+
+            ////#region 解析日志
+            ////ILogUtility logUtility = Presenter.Engine.Get<ILogUtility>();
+            ////if (!File.Exists(LogFile))
+            ////{
+            ////    MessageBox.Show("日志文件不存在");
+            ////    return;
+            ////}
+            ////string log = logUtility.ReadLogFile(@LogFile);
+            ////if (string.IsNullOrWhiteSpace(log))
+            ////{
+            ////    return;
+            ////}
+            ////List<LogEntityBase> logs = logUtility.DecodeLog(log, Presenter.Engine.Get<IAppConfigManage>().UserConfig.分行策略, Presenter.Engine.Get<IAppConfigManage>().UserConfig.时间戳提取策略);
+            ////if (logs == null || logs.Count <= 0)
+            ////{
+            ////    return;
+            ////}
+            ////datas = logs;
+            ////#endregion
+            //List<ICacheItem> logs = new List<ICacheItem>();
+            //List<LogInfoRow> infoRows = new List<LogInfoRow>();
+            //logs = Presenter.Engine.Get<ICachePool>().Get<LogInfoRowTable>().Get();
+            //logs.AsParallel().ForAll(p => 
+            //{
+            //    LogInfoRow row = p as LogInfoRow;
+            //    if (Presenter.CheckPattern(regexs, row.DataInfo))
+            //    {
+            //        infoRows.Add(row);
+            //    }
+            //});
+
+            //List<dynamic> results = new List<dynamic>();
+            //List<string> columns = Presenter.GetCacheColumn(cmb_CacheType.Text);
+            //foreach (LogInfoRow entity in logs)
+            //{
+            //    dynamic obj = new ExpandoObject();
+            //    foreach (string column in columns)
+            //    {
+            //        string value = string.Empty;
+            //        string reg = string.Format("{0}={1}", column, @"\w+\,");
+            //        Regex r = new Regex(@reg);
+            //        MatchCollection m = r.Matches(entity.DataInfo);
+            //        if (m.Count > 0)
+            //        {
+            //            value = m[0].Value.Remove(0, column.Length + 1).TrimEnd(',');
+            //        }
+            //        ((IDictionary<string, object>)obj).Add(column, value);
+            //    }
+            //    results.Add(obj);
+            //}
+            //gridTest.DataSource = results;
         }
     }
 }

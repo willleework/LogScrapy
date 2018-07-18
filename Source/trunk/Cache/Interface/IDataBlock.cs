@@ -55,5 +55,9 @@ namespace Cache
         /// <param name="index"></param>
         /// <returns></returns>
         TCacheItem Remove(TCacheItem item);
+        /// <summary>
+        /// 清空
+        /// </summary>
+        void Clear();
     }
 }

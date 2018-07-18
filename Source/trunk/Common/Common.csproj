@@ -55,6 +55,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Utility\CommonHelper.cs" />
     <Compile Include="Utility\ExcelUtility.cs" />
     <Compile Include="Utility\FileOperate.cs" />
     <Compile Include="Utility\SerializeHelper.cs" />

@@ -44,6 +44,7 @@ namespace ScrapyCache
         {
             this.Register<ClientCacheConfigTable>();
             this.Register<ClientCacheConfigColumnTable>();
+            this.Register<LogInfoRowTable>();
         }
 
         /// <summary>
@@ -55,6 +56,8 @@ namespace ScrapyCache
             cacheConfig.Init();
             ClientCacheConfigColumnTable cacheColumnConfig = this.Get<ClientCacheConfigColumnTable>();
             cacheColumnConfig.Init();
+            LogInfoRowTable logInfoRow = this.Get<LogInfoRowTable>();
+            logInfoRow.Init();
         }
 
         /// <summary>

@@ -91,5 +91,10 @@ namespace Cache
         /// <param name="indexName"></param>
         /// <returns></returns>
         TCacheItem Remove(TCacheItem item);
+
+        /// <summary>
+        /// 清空表数据
+        /// </summary>
+        void Clear();
     }
 }

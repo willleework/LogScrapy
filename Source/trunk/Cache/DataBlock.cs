@@ -223,5 +223,27 @@ namespace Cache
             }
             return item;
         }
+
+        /// <summary>
+        /// 清空缓存项
+        /// </summary>
+        public void Clear()
+        {
+            try
+            {
+                _blockLock.EnterWriteLock();
+                _block.Clear();
+                _uniqueBlock.Clear();
+                _datas.Clear();
+            }
+            catch (Exception ex)
+            {
+
+            }
+            finally
+            {
+                _blockLock.ExitWriteLock();
+            }
+        }
     }
 }
