@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Cache
+namespace Task
 {
     /// <summary>
-    /// 缓存日志
+    /// 日志
     /// </summary>
-    public class CacheLog
+    public class TaskLog
     {
         /// <summary>
         /// 注册Debug级别日志事件

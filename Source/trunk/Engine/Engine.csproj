@@ -70,6 +70,10 @@
       <Project>{C834C7B8-30CE-4C03-8B12-042DA28F0A20}</Project>
       <Name>ScrapyCache</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Task\Task.csproj">
+      <Project>{F8CDF5B6-9F52-4FAF-B4EF-0C113502A4B5}</Project>
+      <Name>Task</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -50,7 +50,7 @@ namespace ScrapyCache
             {
                 throw new Exception(string.Format("缓存表【{0}】获取索引错误，缓存项目信息转换错误", this.TableName));
             }
-            return config.英文名;
+            return config.表名;
         }
 
         /// <summary>
@@ -58,6 +58,10 @@ namespace ScrapyCache
         /// </summary>
         public void LoadDatas(DataTable datas)
         {
+            if (datas == null)
+            {
+                return;
+            }
             foreach (DataRow row in datas.Rows)
             {
                 try

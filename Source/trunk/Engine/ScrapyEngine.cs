@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Task;
 
 namespace Engine
 {
@@ -44,6 +45,7 @@ namespace Engine
             builder.RegisterType<ScrapyCachePool>().As<ICachePool>().SingleInstance();
             builder.RegisterType<LogDecodeUtility>().As<ILogUtility>().SingleInstance();
             builder.RegisterType<LogContext>().As<ILogContext>().SingleInstance();
+            builder.RegisterType<TaskManage>().As<ITaskMange>().SingleInstance();
 
             context = builder.Build();
         }

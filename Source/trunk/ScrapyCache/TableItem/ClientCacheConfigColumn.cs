@@ -25,7 +25,6 @@ namespace ScrapyCache
         public override void Copy(ICacheItem des)
         {
             base.Copy(des);
-            base.Copy(des);
             ClientCacheConfigColumn model = des as ClientCacheConfigColumn;
             model.表名 = this.表名;
             model.标准字段 = this.标准字段;

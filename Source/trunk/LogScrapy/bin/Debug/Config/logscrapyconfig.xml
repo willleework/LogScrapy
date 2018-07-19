@@ -8,15 +8,15 @@
   <时间戳提取策略>\[\d{4}-\d{2}-\d{2} [0-2][0-9]:[0-5][0-9]:[0-5][0-9],[0-9]{3}:\]</时间戳提取策略>
   <缓存匹配策略列表>
     <CachePattern>
-      <CacheType>FutureEntrust</CacheType>
+      <CacheType>期货委托表</CacheType>
       <Pattern>\[缓存\|FutureEntrust\]收到更新消息\(FutureEntrust,oplus.jy_tfutentrusts\)</Pattern>
     </CachePattern>
     <CachePattern>
-      <CacheType>FutureRealdeal</CacheType>
+      <CacheType>期货成交表</CacheType>
       <Pattern>\[缓存\|FutureRealdeal\]收到更新消息\(FutureRealdeal,oplus.jy_tfutrealdeal\)</Pattern>
     </CachePattern>
     <CachePattern>
-      <CacheType>FuturePre</CacheType>
+      <CacheType>期货埋单表</CacheType>
       <Pattern>\[缓存\|FuturePre\]收到更新消息\(FuturePre,oplus.jy_tfutadvscheme\)</Pattern>
     </CachePattern>
     <CachePattern />

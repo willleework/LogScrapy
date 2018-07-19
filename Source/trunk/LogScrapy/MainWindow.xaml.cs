@@ -13,6 +13,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -23,6 +24,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Task;
 
 namespace LogScrapy
 {
@@ -31,6 +33,7 @@ namespace LogScrapy
     /// </summary>
     public partial class MainWindow : Window
     {
+        WaitingDlg dlg = new WaitingDlg();
         #region 属性
         /// <summary>
         /// 业务逻辑层
@@ -58,6 +61,7 @@ namespace LogScrapy
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             Presenter = new LSPresenter(this);
+            Presenter.Engine.Get<ITaskMange>().Init(SynchronizationContext.Current);
             QueryPageInit();
             SettingInit();
         }
@@ -70,16 +74,18 @@ namespace LogScrapy
         private void AddFilterCondition_Click(object sender, RoutedEventArgs e)
         {
             string condition = string.Empty;
-            string column = cmb_CacheColumn.Text;
+            string column = (string)cmb_CacheColumn.SelectedValue;
+            string cacheType = (string)cmb_CacheType.SelectedValue;
+            string colEng = Presenter.GetColumnEngNameByChnName(column, cacheType);
             string value = tb_FilterText.Text;
             TextRange documentTextRange = new TextRange(rtx_FilterPattern.Document.ContentStart, rtx_FilterPattern.Document.ContentEnd);
             if (!string.IsNullOrWhiteSpace(documentTextRange.Text.Trim()))
             {
-                condition = string.Format("{0},{1}={2}", documentTextRange.Text.Trim(), column, value);
+                condition = string.Format("{0},{1}={2}", documentTextRange.Text.Trim(), colEng, value);
             }
             else
             {
-                condition = string.Format("{0}={1}", column, value);
+                condition = string.Format("{0}={1}", colEng, value);
             }
             Paragraph p = new Paragraph();
             Run r = new Run(condition);
@@ -95,7 +101,7 @@ namespace LogScrapy
         /// <param name="datas"></param>
         private void GenerateColumns(object sender, IEnumerable datas)
         {
-            List<string> columns = Presenter.GetCacheColumn(cmb_CacheType.Text);
+            List<ClientCacheConfigColumn> columns = Presenter.GetCacheColumn(cmb_CacheType.Text);
             DataGrid grid = (DataGrid)sender;
             grid.ItemsSource = null;
             grid.Columns.Clear();
@@ -109,11 +115,11 @@ namespace LogScrapy
                 Header = "日志级别",
                 Binding = new Binding("Level"),
             });
-            foreach (string column in columns)
+            foreach (ClientCacheConfigColumn column in columns)
             {
                 DataGridTextColumn gridcolumn = new DataGridTextColumn();
-                gridcolumn.Header = column;
-                gridcolumn.Binding = new Binding(column);
+                gridcolumn.Header = column.标准字段名称;
+                gridcolumn.Binding = new Binding(column.标准字段);
                 grid.Columns.Add(gridcolumn);
             }
         }
@@ -141,6 +147,9 @@ namespace LogScrapy
         private void QueryPageInit()
         {
             cmb_CacheType.ItemsSource = new ObservableCollection<string>(Presenter.GetCacheType());
+            //cmb_CacheType.ItemsSource = Presenter.GetCacheTypes();
+            //cmb_CacheType.DisplayMemberPath = "表名";
+            //cmb_CacheType.SelectedValuePath = "英文名";
             dataGrid.GeneratingColumnsEvent += GenerateColumns;
         }
 
@@ -178,7 +187,43 @@ namespace LogScrapy
             }
             #endregion
 
-            dataGrid.DataSource = Presenter.GetLogInfoRowsByRegFilters(regexs, cmb_CacheType.Text);
+            //dataGrid.DataSource = Presenter.GetLogInfoRowsByRegFilters(regexs, cmb_CacheType.Text);
+            dynamic param = new ExpandoObject();
+            param.Regexs = regexs;
+            param.CacheType = cmb_CacheType.Text;
+            Presenter.Engine.Get<ITaskMange>().AsyncRunWithCallBack<dynamic, List<dynamic>>(Presenter.GetLogInfoRowsByRegFilters, BingdingLogs, param as object);
+            ShowWaitingDialog();
+        }
+
+        /// <summary>
+        /// 绑定数据
+        /// </summary>
+        /// <param name="datas"></param>
+        private void BingdingLogs(List<dynamic> datas)
+        {
+            CloseWaitingDialog();
+            dataGrid.DataSource = datas;
+        }
+
+        /// <summary>
+        /// 显示等待窗口
+        /// </summary>
+        private void ShowWaitingDialog()
+        {
+            dlg.Owner = this;
+            dlg.ShowInTaskbar = false;
+            dlg.ShowDialog();
+        }
+
+        /// <summary>
+        /// 隐藏等待窗口
+        /// </summary>
+        private void CloseWaitingDialog()
+        {
+            if (dlg != null)
+            {
+                dlg.Hide();
+            }
         }
 
         /// <summary>
@@ -214,7 +259,8 @@ namespace LogScrapy
             }
             else
             {
-                columns = new ObservableCollection<string>(Presenter.GetCacheColumn(cacheType));
+                List<ClientCacheConfigColumn> cacheColumns = Presenter.GetCacheColumn(cacheType);
+                columns = new ObservableCollection<string>(cacheColumns.Select(p=>p.标准字段名称));
             }
             cmb_CacheColumn.ItemsSource = columns;
         }

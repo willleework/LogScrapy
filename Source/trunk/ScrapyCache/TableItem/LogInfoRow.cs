@@ -60,7 +60,7 @@ namespace ScrapyCache
         /// <returns></returns>
         public override string ToString()
         {
-            return string.Format("[ClientCacheConfig]英文名称:{0}, 表名:{1}", this.TimeStamp, this.DataInfo);
+            return string.Format("[ClientCacheConfig]时间戳:{0}, 日志级别:{1}", this.TimeStamp, this.Level);
         }
     }
 }

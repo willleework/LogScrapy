@@ -108,7 +108,29 @@ namespace LogScrapy
                 foreach (ICacheItem row in Engine.Get<ICachePool>().Get<ClientCacheConfigTable>().Get())
                 {
                     ClientCacheConfig config = row as ClientCacheConfig;
-                    types.Add(config.英文名);
+                    types.Add(config.表名);
+                }
+            }
+            catch (Exception ex)
+            {
+                Engine.Get<ILogContext>().LogForCommon.LogError(string.Format("获取缓存表信息失败：{0};StackTrace:{1}", ex.Message, ex.StackTrace));
+            }
+            return types;
+        }
+
+        /// <summary>
+        /// 获取缓存类型
+        /// </summary>
+        /// <returns></returns>
+        public List<ClientCacheConfig> GetCacheTypes()
+        {
+            List<ClientCacheConfig> types = new List<ClientCacheConfig>();
+            try
+            {
+                foreach (ICacheItem row in Engine.Get<ICachePool>().Get<ClientCacheConfigTable>().Get())
+                {
+                    ClientCacheConfig config = row as ClientCacheConfig;
+                    types.Add(config);
                 }
             }
             catch (Exception ex)
@@ -122,9 +144,9 @@ namespace LogScrapy
         /// 获取缓存包含的列
         /// </summary>
         /// <returns></returns>
-        public List<string> GetCacheColumn(string cacheName)
+        public List<ClientCacheConfigColumn> GetCacheColumn(string cacheName)
         {
-            List<string> columns = new List<string>();
+            List<ClientCacheConfigColumn> columns = new List<ClientCacheConfigColumn>();
             try
             {
                 List<ICacheItem> tables = Engine.Get<ICachePool>().Get<ClientCacheConfigTable>().Get(cacheName);
@@ -136,7 +158,7 @@ namespace LogScrapy
                 foreach (ICacheItem row in Engine.Get<ICachePool>().Get<ClientCacheConfigColumnTable>().Get(table.表名, ClientCacheConfigColumnTable.IndexByTable))
                 {
                     ClientCacheConfigColumn column = row as ClientCacheConfigColumn;
-                    columns.Add(column.标准字段);
+                    columns.Add(column);
                 }
             }
             catch (Exception ex)
@@ -144,6 +166,30 @@ namespace LogScrapy
                 Engine.Get<ILogContext>().LogForCommon.LogError(string.Format("获取缓存表列信息失败：{0};StackTrace:{1}", ex.Message, ex.StackTrace));
             }
             return columns;
+        }
+
+        /// <summary>
+        /// 通过列中文名称获取英文名
+        /// </summary>
+        /// <param name="chnName"></param>
+        /// <param name="cacheType"></param>
+        /// <returns></returns>
+        public string GetColumnEngNameByChnName(string chnName, string cacheType)
+        {
+            List<ICacheItem>columns = Engine.Get<ICachePool>().Get<ClientCacheConfigColumnTable>().Get(cacheType, ClientCacheConfigColumnTable.IndexByTable);
+            if (columns.Count > 0)
+            {
+                ICacheItem item = columns.Find(p =>
+                {
+                    ClientCacheConfigColumn col = p as ClientCacheConfigColumn;
+                    return col.标准字段名称.Equals(chnName);
+                });
+                if (item != null)
+                {
+                    return ((ClientCacheConfigColumn)item).标准字段;
+                }
+            }
+            return string.Empty;
         }
 
         /// <summary>
@@ -160,9 +206,11 @@ namespace LogScrapy
             try
             {
                 logs = Engine.Get<ICachePool>().Get<LogInfoRowTable>().Get();
-                List<string> columns = GetCacheColumn(cacheType);
+                List<ClientCacheConfigColumn> columns = GetCacheColumn(cacheType);
                 //regexs.Clear();
-                logs.AsParallel().ForAll(p =>
+                //logs.AsParallel().ForAll(p =>
+                //{
+                foreach (LogInfoRow p in logs)
                 {
                     LogInfoRow row = p as LogInfoRow;
                     if (regexs.Count <= 0 || CheckPattern(regexs, row.DataInfo))
@@ -170,27 +218,38 @@ namespace LogScrapy
                         dynamic obj = new ExpandoObject();
                         ((IDictionary<string, object>)obj).Add("TimeStamp", row.TimeStamp);
                         ((IDictionary<string, object>)obj).Add("Level", row.Level);
-                        foreach (string column in columns)
+                        foreach (ClientCacheConfigColumn column in columns)
                         {
                             string value = string.Empty;
-                            string reg = string.Format("{0}={1}", column, @"\w+\,");
+                            string reg = string.Format("{0}={1}", column.标准字段, @"\w+\,");
                             Regex r = new Regex(@reg);
                             MatchCollection m = r.Matches(row.DataInfo);
                             if (m.Count > 0)
                             {
-                                value = m[0].Value.Remove(0, column.Length + 1).TrimEnd(',');
+                                value = m[0].Value.Remove(0, column.标准字段.Length + 1).TrimEnd(',');
                             }
-                            ((IDictionary<string, object>)obj).Add(column, value);
+                            ((IDictionary<string, object>)obj).Add(column.标准字段, value);
                         }
                         results.Add(obj);
                     }
-                });
+                }
+                //});
             }
             catch (Exception ex)
             {
                 Engine.Get<ILogContext>().LogForCommon.LogError(string.Format("筛选日志信息失败：{0};StackTrace:{1}", ex.Message, ex.StackTrace));
             }
             return results;
+        }
+
+        /// <summary>
+        /// 根据匹配模式获取动态类型日志信息列表
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public List<dynamic> GetLogInfoRowsByRegFilters(dynamic param)
+        {
+            return GetLogInfoRowsByRegFilters(param.Regexs, param.CacheType);
         }
     }
 }

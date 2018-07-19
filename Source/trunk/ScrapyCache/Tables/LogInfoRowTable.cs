@@ -55,15 +55,15 @@ namespace ScrapyCache
             try
             {
                 this.Clear();
-                //foreach (LogInfoRow row in logRows)
-                //{
-                //    this.Add(row);
-                //}
-
-                logRows.AsParallel().ForAll(p => 
+                foreach (LogInfoRow row in logRows)
                 {
-                    this.Add(p);
-                });
+                    this.Add(row);
+                }
+
+                //logRows.AsParallel().ForAll(p => 
+                //{
+                //    this.Add(p);
+                //});
             }
             catch (Exception ex)
             {

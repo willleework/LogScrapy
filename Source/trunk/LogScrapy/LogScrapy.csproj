@@ -53,6 +53,9 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WpfAnimatedGif, Version=1.4.15.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\WpfAnimatedGif.1.4.16\lib\net\WpfAnimatedGif.dll</HintPath>
+    </Reference>
     <Reference Include="WPFToolkit">
       <HintPath>..\packages\WPFToolkit.3.5.50211.1\lib\WPFToolkit.dll</HintPath>
     </Reference>
@@ -66,6 +69,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="WaitingDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -75,6 +82,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Control\LSDataGrid.cs" />
+    <Compile Include="WaitingDlg.xaml.cs">
+      <DependentUpon>WaitingDlg.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Presenter\LSPresenter.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -99,6 +109,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -132,11 +143,21 @@
       <Project>{C834C7B8-30CE-4C03-8B12-042DA28F0A20}</Project>
       <Name>ScrapyCache</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Task\Task.csproj">
+      <Project>{f8cdf5b6-9f52-4faf-b4ef-0c113502a4b5}</Project>
+      <Name>Task</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Theme.WPF\Theme.WPF.csproj">
       <Project>{858a9b78-33b4-4123-8fd0-494996c482d4}</Project>
       <Name>Theme.WPF</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="loading.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Dialog\" />
+    <Folder Include="Resource\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
