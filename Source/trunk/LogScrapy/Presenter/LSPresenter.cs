@@ -3,6 +3,7 @@ using Config.Entity;
 using Config.Interface;
 using Engine;
 using Log;
+using LogDecode;
 using ScrapyCache;
 using System;
 using System.Collections.Generic;
@@ -250,6 +251,36 @@ namespace LogScrapy
         public List<dynamic> GetLogInfoRowsByRegFilters(dynamic param)
         {
             return GetLogInfoRowsByRegFilters(param.Regexs, param.CacheType);
+        }
+
+        /// <summary>
+        /// 加载日志到缓存中
+        /// </summary>
+        /// <param name="path"></param>
+        public void LoadLogDatasToCache(string path)
+        {
+            ILogUtility logUtility = Engine.Get<ILogUtility>();
+            string logInfo = logUtility.ReadLogFile(@path);
+            if (string.IsNullOrWhiteSpace(logInfo))
+            {
+                return;
+            }
+            List<LogEntityBase> logs = logUtility.DecodeLog(logInfo, Engine.Get<IAppConfigManage>().UserConfig.分行策略, Engine.Get<IAppConfigManage>().UserConfig.时间戳提取策略);
+            if (logs == null || logs.Count <= 0)
+            {
+                return;
+            }
+            List<LogInfoRow> logRows = new List<LogInfoRow>();
+            foreach (LogEntityBase log in logs)
+            {
+                logRows.Add(new LogInfoRow()
+                {
+                    Level = log.Level,
+                    TimeStamp = log.TimeStamp,
+                    DataInfo = log.DataInfo,
+                });
+            }
+            Engine.Get<ICachePool>().Get<LogInfoRowTable>().LoadDatas(logRows);
         }
     }
 }

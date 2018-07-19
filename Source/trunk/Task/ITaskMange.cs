@@ -58,5 +58,26 @@ namespace Task
         /// <param name="paramOut">参数2</param>
         /// <param name="options"></param>
         void AsyncRunWithCallBack<ParamIn, ParamOut>(Func<ParamIn, ParamOut> asyncMethod, Action<ParamOut> callbackMethod, ParamIn paramIn, TaskCreationOptions options = TaskCreationOptions.PreferFairness) where ParamOut : class;
+
+        /// <summary>
+        /// 执行一个异步操作，并在该异步操作执行结束后，将结果回调到UI函数处理。
+        /// 注意：在执行同步任务时，需要先判断入参是否为空！
+        /// </summary>
+        /// <typeparam name="Param">参数1类型</typeparam>
+        /// <param name="asyncMethod">异步操作</param>
+        /// <param name="callbackMethod">UI回调函数</param>
+        /// <param name="paramIn">参数1</param>
+        /// <param name="options"></param>
+        void AsyncRunWithCallBack<Param>(Action<Param> asyncMethod, Action callbackMethod, Param paramIn, TaskCreationOptions options = TaskCreationOptions.PreferFairness);
+
+        /// <summary>
+        /// 执行一个异步操作，并在该异步操作执行结束后，将结果回调到UI函数处理。
+        /// 注意：在执行同步任务时，需要先判断入参是否为空！
+        /// </summary>
+        /// <typeparam name="Param">参数1类型</typeparam>
+        /// <param name="asyncMethod">异步操作</param>
+        /// <param name="callbackMethod">UI回调函数</param>
+        /// <param name="options"></param>
+        void AsyncRunWithCallBack<Param>(Action asyncMethod, Action callbackMethod, TaskCreationOptions options = TaskCreationOptions.PreferFairness);
     }
 }

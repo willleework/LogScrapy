@@ -34,6 +34,7 @@ namespace LogScrapy
     public partial class MainWindow : Window
     {
         WaitingDlg dlg = new WaitingDlg();
+        enum DialogMode { Async, Sync};
         #region 属性
         /// <summary>
         /// 业务逻辑层
@@ -60,6 +61,10 @@ namespace LogScrapy
         /// <param name="e"></param>
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            dlg.Owner = this;
+            dlg.Topmost = true;
+            dlg.ShowInTaskbar = false;
+
             Presenter = new LSPresenter(this);
             Presenter.Engine.Get<ITaskMange>().Init(SynchronizationContext.Current);
             QueryPageInit();
@@ -121,6 +126,32 @@ namespace LogScrapy
                 gridcolumn.Header = column.标准字段名称;
                 gridcolumn.Binding = new Binding(column.标准字段);
                 grid.Columns.Add(gridcolumn);
+            }
+        }
+
+        /// <summary>
+        /// 显示等待窗口
+        /// </summary>
+        private void ShowWaitingDialog(DialogMode mode = DialogMode.Sync)
+        {
+            if (mode == DialogMode.Sync)
+            {
+                dlg.ShowDialog();
+            }
+            else
+            {
+                dlg.Show();
+            }
+        }
+
+        /// <summary>
+        /// 隐藏等待窗口
+        /// </summary>
+        private void CloseWaitingDialog()
+        {
+            if (dlg != null)
+            {
+                dlg.Hide();
             }
         }
 
@@ -206,27 +237,6 @@ namespace LogScrapy
         }
 
         /// <summary>
-        /// 显示等待窗口
-        /// </summary>
-        private void ShowWaitingDialog()
-        {
-            dlg.Owner = this;
-            dlg.ShowInTaskbar = false;
-            dlg.ShowDialog();
-        }
-
-        /// <summary>
-        /// 隐藏等待窗口
-        /// </summary>
-        private void CloseWaitingDialog()
-        {
-            if (dlg != null)
-            {
-                dlg.Hide();
-            }
-        }
-
-        /// <summary>
         /// 选择日志文件
         /// </summary>
         /// <param name="sender"></param>
@@ -272,33 +282,13 @@ namespace LogScrapy
         /// <param name="e"></param>
         private void LoadLogsToCache_Click(object sender, RoutedEventArgs e)
         {
-            ILogUtility logUtility = Presenter.Engine.Get<ILogUtility>();
-            if (!File.Exists(LogFile))
+            if (!File.Exists(@LogFile))
             {
                 MessageBox.Show("日志文件不存在");
                 return;
             }
-            string logInfo = logUtility.ReadLogFile(@LogFile);
-            if (string.IsNullOrWhiteSpace(logInfo))
-            {
-                return;
-            }
-            List<LogEntityBase> logs = logUtility.DecodeLog(logInfo, Presenter.Engine.Get<IAppConfigManage>().UserConfig.分行策略, Presenter.Engine.Get<IAppConfigManage>().UserConfig.时间戳提取策略);
-            if (logs == null || logs.Count <= 0)
-            {
-                return;
-            }
-            List<LogInfoRow> logRows = new List<LogInfoRow>();
-            foreach (LogEntityBase log in logs)
-            {
-                logRows.Add(new LogInfoRow()
-                {
-                    Level = log.Level,
-                    TimeStamp = log.TimeStamp,
-                    DataInfo = log.DataInfo,
-                });
-            }
-            Presenter.Engine.Get<ICachePool>().Get<LogInfoRowTable>().LoadDatas(logRows);
+            Presenter.Engine.Get<ITaskMange>().AsyncRunWithCallBack<string>(Presenter.LoadLogDatasToCache, CloseWaitingDialog, LogFile);
+            ShowWaitingDialog();
         }
     }
 

@@ -153,86 +153,92 @@ namespace Task
             });
         }
 
-        ///// <summary>
-        ///// 执行一个异步操作，并在该异步操作执行结束后，将结果回调到UI函数处理。
-        ///// 注意：在执行同步任务时，需要先判断入参是否为空！
-        ///// </summary>
-        ///// <typeparam name="ParamIn">参数1类型</typeparam>
-        ///// <typeparam name="ParamOut">参数2类型</typeparam>
-        ///// <param name="asyncMethod">异步操作</param>
-        ///// <param name="callbackMethod">UI回调函数</param>
-        ///// <param name="paramIn">参数1</param>
-        ///// <param name="paramOut">参数2</param>
-        ///// <param name="options"></param>
-        //public void AsyncRunWithCallBack<Param>(Action<Param> asyncMethod, Action callbackMethod, Param paramIn, TaskCreationOptions options = TaskCreationOptions.PreferFairness)
-        //{
-        //    _factory.StartNew(() =>
-        //    {
-        //        try
-        //        {
-        //            asyncMethod(paramIn);
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            TaskLog.LogExcepion("在执行异步回调任务时，执行异步任务出错", ex);
-        //            throw ex;
-        //        }
-        //    })
-        //    .ContinueWith(task =>
-        //    {
-        //        if (task.IsCompleted)
-        //        {
-        //            try
-        //            {
-        //                callbackMethod();
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                TaskLog.LogExcepion("在执行异步回调任务时，执行回调任务出错", ex);
-        //            }
-        //        }
-        //    });
-        //}
+        /// <summary>
+        /// 执行一个异步操作，并在该异步操作执行结束后，将结果回调到UI函数处理。
+        /// 注意：在执行同步任务时，需要先判断入参是否为空！
+        /// </summary>
+        /// <typeparam name="ParamIn">参数1类型</typeparam>
+        /// <typeparam name="ParamOut">参数2类型</typeparam>
+        /// <param name="asyncMethod">异步操作</param>
+        /// <param name="callbackMethod">UI回调函数</param>
+        /// <param name="paramIn">参数1</param>
+        /// <param name="paramOut">参数2</param>
+        /// <param name="options"></param>
+        public void AsyncRunWithCallBack<Param>(Action<Param> asyncMethod, Action callbackMethod, Param paramIn, TaskCreationOptions options = TaskCreationOptions.PreferFairness)
+        {
+            _factory.StartNew(() =>
+            {
+                try
+                {
+                    asyncMethod(paramIn);
+                }
+                catch (Exception ex)
+                {
+                    TaskLog.LogExcepion("在执行异步回调任务时，执行异步任务出错", ex);
+                    throw ex;
+                }
+            })
+            .ContinueWith(task =>
+            {
+                if (task.IsCompleted)
+                {
+                    try
+                    {
+                        _context.Send(new SendOrPostCallback(p =>
+                        {
+                            callbackMethod();
+                        }), task);
+                    }
+                    catch (Exception ex)
+                    {
+                        TaskLog.LogExcepion("在执行异步回调任务时，执行回调任务出错", ex);
+                    }
+                }
+            });
+        }
 
-        ///// <summary>
-        ///// 执行一个异步操作，并在该异步操作执行结束后，将结果回调到UI函数处理。
-        ///// 注意：在执行同步任务时，需要先判断入参是否为空！
-        ///// </summary>
-        ///// <typeparam name="ParamIn">参数1类型</typeparam>
-        ///// <typeparam name="ParamOut">参数2类型</typeparam>
-        ///// <param name="asyncMethod">异步操作</param>
-        ///// <param name="callbackMethod">UI回调函数</param>
-        ///// <param name="paramIn">参数1</param>
-        ///// <param name="paramOut">参数2</param>
-        ///// <param name="options"></param>
-        //public void AsyncRunWithCallBack<Param>(Action asyncMethod, Action callbackMethod, TaskCreationOptions options = TaskCreationOptions.PreferFairness)
-        //{
-        //    _factory.StartNew(() =>
-        //    {
-        //        try
-        //        {
-        //            asyncMethod();
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            TaskLog.LogExcepion("在执行异步回调任务时，执行异步任务出错", ex);
-        //            throw ex;
-        //        }
-        //    })
-        //    .ContinueWith(task =>
-        //    {
-        //        if (task.IsCompleted)
-        //        {
-        //            try
-        //            {
-        //                callbackMethod();
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                TaskLog.LogExcepion("在执行异步回调任务时，执行回调任务出错", ex);
-        //            }
-        //        }
-        //    });
-        //}
+        /// <summary>
+        /// 执行一个异步操作，并在该异步操作执行结束后，将结果回调到UI函数处理。
+        /// 注意：在执行同步任务时，需要先判断入参是否为空！
+        /// </summary>
+        /// <typeparam name="ParamIn">参数1类型</typeparam>
+        /// <typeparam name="ParamOut">参数2类型</typeparam>
+        /// <param name="asyncMethod">异步操作</param>
+        /// <param name="callbackMethod">UI回调函数</param>
+        /// <param name="paramIn">参数1</param>
+        /// <param name="paramOut">参数2</param>
+        /// <param name="options"></param>
+        public void AsyncRunWithCallBack<Param>(Action asyncMethod, Action callbackMethod, TaskCreationOptions options = TaskCreationOptions.PreferFairness)
+        {
+            _factory.StartNew(() =>
+            {
+                try
+                {
+                    asyncMethod();
+                }
+                catch (Exception ex)
+                {
+                    TaskLog.LogExcepion("在执行异步回调任务时，执行异步任务出错", ex);
+                    throw ex;
+                }
+            })
+            .ContinueWith(task =>
+            {
+                if (task.IsCompleted)
+                {
+                    try
+                    {
+                        _context.Send(new SendOrPostCallback(p =>
+                        {
+                            callbackMethod();
+                        }), task);
+                    }
+                    catch (Exception ex)
+                    {
+                        TaskLog.LogExcepion("在执行异步回调任务时，执行回调任务出错", ex);
+                    }
+                }
+            });
+        }
     }
 }
