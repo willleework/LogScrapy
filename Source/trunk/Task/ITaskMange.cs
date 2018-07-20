@@ -79,5 +79,20 @@ namespace Task
         /// <param name="callbackMethod">UI回调函数</param>
         /// <param name="options"></param>
         void AsyncRunWithCallBack<Param>(Action asyncMethod, Action callbackMethod, TaskCreationOptions options = TaskCreationOptions.PreferFairness);
+
+        /// <summary>
+        /// 注册定时任务
+        /// </summary>
+        /// <param name="method">定时任务</param>
+        /// <param name="durations">执行间隔时间，作为内部分组依据</param>
+        /// <param name="options">任务参数，耗时操作需在此参数指明，否则有可能造成任务调度被耗时操作阻塞</param>
+        void RegisterScheduleTask(Action method, int durations, TaskCreationOptions options = TaskCreationOptions.PreferFairness);
+
+        /// <summary>
+        /// 取消注册任务
+        /// </summary>
+        /// <param name="method">取消的任务</param>
+        /// <param name="durations">定时时间，作为内部分组依据</param>
+        void UnRegisterScheduleTask(Action method, int durations);
     }
 }

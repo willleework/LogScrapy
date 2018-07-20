@@ -50,12 +50,17 @@ namespace ScrapyCache
         /// <summary>
         /// 加载数据
         /// </summary>
-        public void LoadDatas(List<LogInfoRow> logRows)
+        public void LoadDatas(List<LogInfoRow> datas)
         {
+            if (datas == null || datas.Count <=0)
+            {
+                ScrapyCachePool.LogInfo("【客户端缓存表】数据加载失败：数据集为空");
+                return;
+            }
             try
             {
                 this.Clear();
-                foreach (LogInfoRow row in logRows)
+                foreach (LogInfoRow row in datas)
                 {
                     this.Add(row);
                 }

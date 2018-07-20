@@ -254,10 +254,9 @@ namespace Task
         /// <summary>
         /// 任务调度（待测试方法）
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="method">任务</param>
-        /// <param name="durations">调度间隔</param>
-        /// <param name="options">调度参数</param>
+        /// <param name="method">定时任务</param>
+        /// <param name="durations">执行间隔时间，作为内部分组依据</param>
+        /// <param name="options">任务参数，耗时操作需在此参数指明，否则有可能造成任务调度被耗时操作阻塞</param>
         public void RegisterScheduleTask(Action method, int durations, TaskCreationOptions options = TaskCreationOptions.PreferFairness)
         {
             try
@@ -300,8 +299,8 @@ namespace Task
         /// <summary>
         /// 注销任务调度（待测试方法）
         /// </summary>
-        /// <param name="method"></param>
-        /// <param name="durations"></param>
+        /// <param name="method">取消的任务</param>
+        /// <param name="durations">定时时间，作为内部分组依据</param>
         public void UnRegisterScheduleTask(Action method, int durations)
         {
             _sheduleLock.EnterUpgradeableReadLock();

@@ -18,6 +18,10 @@ namespace ScrapyCache
         /// 唯一索引
         /// </summary>
         public static string IndexUnique => "Unique";
+        /// <summary>
+        /// 按业务索引
+        /// </summary>
+        public static string IndexByDomain => "DomainIndex";
 
         /// <summary>
         /// 缓存表初始化
@@ -32,6 +36,13 @@ namespace ScrapyCache
                 GetIndexKey = GetUniqueIndex
             };
             AddIndex(uniqueIndex);
+            CacheIndex domainIndex = new CacheIndex()
+            {
+                IndexName = IndexByDomain,
+                IndexType = IndexType.非唯一索引,
+                GetIndexKey = GetDomainIndex,
+            };
+            AddIndex(domainIndex);
         }
 
         /// <summary>
@@ -54,12 +65,32 @@ namespace ScrapyCache
         }
 
         /// <summary>
+        /// 获取业务分类索引
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        private string GetDomainIndex(ICacheItem item)
+        {
+            if (item == null)
+            {
+                throw new Exception(string.Format("缓存表【{0}】获取索引错误，缓存项为空", this.TableName));
+            }
+            ClientCacheConfig config = item as ClientCacheConfig;
+            if (config == null)
+            {
+                throw new Exception(string.Format("缓存表【{0}】获取索引错误，缓存项目信息转换错误", this.TableName));
+            }
+            return config.后台组;
+        }
+
+        /// <summary>
         /// 加载数据
         /// </summary>
         public void LoadDatas(DataTable datas)
         {
-            if (datas == null)
+            if (datas == null || datas.Rows == null)
             {
+                ScrapyCachePool.LogInfo("【客户端缓存表】数据加载失败：数据集为空");
                 return;
             }
             foreach (DataRow row in datas.Rows)

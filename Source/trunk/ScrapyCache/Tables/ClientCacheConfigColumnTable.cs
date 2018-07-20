@@ -87,6 +87,11 @@ namespace ScrapyCache
         /// </summary>
         public void LoadDatas(DataTable datas)
         {
+            if (datas==null || datas.Rows == null)
+            {
+                ScrapyCachePool.LogInfo("【客户端缓存列信息表】数据加载失败：数据集为空");
+                return;
+            }
             foreach (DataRow row in datas.Rows)
             {
                 try

@@ -154,7 +154,6 @@ namespace LogScrapy
                 dlg.Hide();
             }
         }
-
     }
 
     /// <summary>
@@ -177,10 +176,7 @@ namespace LogScrapy
 
         private void QueryPageInit()
         {
-            cmb_CacheType.ItemsSource = new ObservableCollection<string>(Presenter.GetCacheType());
-            //cmb_CacheType.ItemsSource = Presenter.GetCacheTypes();
-            //cmb_CacheType.DisplayMemberPath = "表名";
-            //cmb_CacheType.SelectedValuePath = "英文名";
+            cmb_DomainType_SelectionChanged(null, null);
             dataGrid.GeneratingColumnsEvent += GenerateColumns;
         }
 
@@ -191,6 +187,10 @@ namespace LogScrapy
         /// <param name="e"></param>
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            if (Presenter == null)
+            {
+                return;
+            }
             #region 获取过滤模式
             List<Regex> regexs = new List<Regex>();
             string cachePattern = Presenter.GetCachePatternByType(cmb_CacheType.Text);
@@ -254,12 +254,47 @@ namespace LogScrapy
         }
 
         /// <summary>
+        /// 业务选择
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void cmb_DomainType_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (Presenter == null)
+            {
+                return;
+            }
+            ObservableCollection<string> cacheTyps;
+            ComboBoxItem domainItem = (ComboBoxItem)cmb_DomainType.SelectedItem;
+            string domainType = string.Empty;
+            if (domainItem.Content == null)
+            {
+                return;
+            }
+            domainType = (string)domainItem.Content;
+            if (string.IsNullOrWhiteSpace(domainType))
+            {
+                cacheTyps = new ObservableCollection<string>();
+            }
+            else
+            {
+                List<ClientCacheConfig> cacheColumns = Presenter.GetCacheTypes(domainType);
+                cacheTyps = new ObservableCollection<string>(cacheColumns.Select(p => p.表名));
+            }
+            cmb_CacheType.ItemsSource = cacheTyps;
+        }
+
+        /// <summary>
         /// 缓存类型选择
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void cmb_CacheType_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (Presenter == null)
+            {
+                return;
+            }
             ObservableCollection<string> columns;
             string cacheType = (string)cmb_CacheType.SelectedItem;
 
@@ -282,6 +317,10 @@ namespace LogScrapy
         /// <param name="e"></param>
         private void LoadLogsToCache_Click(object sender, RoutedEventArgs e)
         {
+            if (Presenter == null)
+            {
+                return;
+            }
             if (!File.Exists(@LogFile))
             {
                 MessageBox.Show("日志文件不存在");
@@ -305,6 +344,8 @@ namespace LogScrapy
         {
             tb_baseCacheSettingFile.Text = Presenter.Engine.Get<IAppConfigManage>().UserConfig.公共缓存配置目录;
             tb_derCacheSettingFile.Text = Presenter.Engine.Get<IAppConfigManage>().UserConfig.衍生品缓存配置目录;
+            tb_xhCacheSettingFile.Text = Presenter.Engine.Get<IAppConfigManage>().UserConfig.权益缓存配置目录;
+            tb_gsCacheSettingFile.Text = Presenter.Engine.Get<IAppConfigManage>().UserConfig.固收缓存配置目录;
             txt_RawRowPattern.Text = Presenter.Engine.Get<IAppConfigManage>().UserConfig.分行策略;
             txt_TimeStrapPattern.Text = Presenter.Engine.Get<IAppConfigManage>().UserConfig.时间戳提取策略;
             if (Presenter.Engine.Get<IAppConfigManage>().UserConfig.缓存匹配策略列表 != null && Presenter.Engine.Get<IAppConfigManage>().UserConfig.缓存匹配策略列表.Count > 0)
@@ -378,6 +419,40 @@ namespace LogScrapy
             {
                 tb_derCacheSettingFile.Text = ofd.FileName;
                 Presenter.Engine.Get<IAppConfigManage>().UserConfig.衍生品缓存配置目录 = ofd.FileName;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void XHCacheConfigFileSelect_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
+            ofd.DefaultExt = ".xlsm";
+            ofd.Filter = "Excel File|*.xlsm|All files (*.*)|*.*";
+            if (ofd.ShowDialog() == true)
+            {
+                tb_xhCacheSettingFile.Text = ofd.FileName;
+                Presenter.Engine.Get<IAppConfigManage>().UserConfig.权益缓存配置目录 = ofd.FileName;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void GSCacheConfigFileSelect_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
+            ofd.DefaultExt = ".xlsm";
+            ofd.Filter = "Excel File|*.xlsm|All files (*.*)|*.*";
+            if (ofd.ShowDialog() == true)
+            {
+                tb_gsCacheSettingFile.Text = ofd.FileName;
+                Presenter.Engine.Get<IAppConfigManage>().UserConfig.固收缓存配置目录 = ofd.FileName;
             }
         }
     }

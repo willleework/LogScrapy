@@ -123,12 +123,12 @@ namespace LogScrapy
         /// 获取缓存类型
         /// </summary>
         /// <returns></returns>
-        public List<ClientCacheConfig> GetCacheTypes()
+        public List<ClientCacheConfig> GetCacheTypes(string domainName)
         {
             List<ClientCacheConfig> types = new List<ClientCacheConfig>();
             try
             {
-                foreach (ICacheItem row in Engine.Get<ICachePool>().Get<ClientCacheConfigTable>().Get())
+                foreach (ICacheItem row in Engine.Get<ICachePool>().Get<ClientCacheConfigTable>().Get(domainName, ClientCacheConfigTable.IndexByDomain))
                 {
                     ClientCacheConfig config = row as ClientCacheConfig;
                     types.Add(config);

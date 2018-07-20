@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:LogScrapy"
         xmlns:toolkitLayout="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Layout.Toolkit"
         xmlns:toolkitInput="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Input.Toolkit" 
-        Title="LogScrapy" Height="671" Width="1287" Loaded="Window_Loaded">
+        Title="LogScrapy" Height="671" Width="1300" Loaded="Window_Loaded">
     <Window.Resources>
         <DataTemplate x:Key="TextDataTemplate">
             <TextBlock TextWrapping="Wrap" Text="{Binding DataInfo, Mode=OneWay}" ToolTipService.ToolTip="{Binding DataInfo}"/>
@@ -19,27 +19,25 @@
         </Grid.ColumnDefinitions>-->
         <TabControl HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <!--监控界面-->
-            <TabItem Header="监控界面">
+            <TabItem Header="缓存日志查询">
                 <Grid Background="#FFE5E5E5">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="107*"></RowDefinition>
                         <RowDefinition Height="631*"></RowDefinition>
                     </Grid.RowDefinitions>
-                    <GroupBox Grid.Row="0" Header="缓存日志查询"  BorderBrush="Black" Margin="5">
+                    <GroupBox Grid.Row="0" Header="日志数据加载"  BorderBrush="Black" Margin="5">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="5">
                                 <TextBox x:Name="tb_LogFileDir" FontSize="10" Width="150" IsReadOnly="True"></TextBox>
                                 <Button FontSize="12" Click="LogFileSelect_Click">选择日志文件</Button>
                             </StackPanel>
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="5">
-                                <TextBlock  Text="缓存类型："  FontSize="12" HorizontalAlignment="Center" Padding="5" Style="{StaticResource SubHeaderTextBlockStyle}"  />
-                                <ComboBox x:Name="cmb_CacheType" FontSize="12" Width="178" SelectedIndex="0" Text="全部" Height="30" SelectionChanged="cmb_CacheType_SelectionChanged"></ComboBox>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock FontSize="10" Height="30" Width="5"></TextBlock>
+                                <Button Width="170" Height="30" HorizontalAlignment="Left" Click="LoadLogsToCache_Click">加载日志信息到缓存</Button>
                             </StackPanel>
                             <StackPanel Margin="5" Orientation="Horizontal" VerticalAlignment="Center" Height="50">
-                                <TextBlock Text="过滤条件：" FontSize="11" Padding="5" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource SubHeaderTextBlockStyle}"  />
-                                <RichTextBox x:Name="rtx_FilterPattern" FontSize="11" Width="354" Height="30"></RichTextBox>
+
                             </StackPanel>
-                            <Button Content="查询数据" FontSize="11" Click="Button_Click" Height="20"/>
                             <!--<Expander Margin="5" Height="30"></Expander>
                             <TextBlock FontSize="12" VerticalAlignment="Center">复杂选项</TextBlock>-->
                         </StackPanel>
@@ -57,102 +55,141 @@
                         <Grid Grid.Column="1">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="40"></RowDefinition>
-                                <RowDefinition Height="30"></RowDefinition>
-                                <RowDefinition Height="30"></RowDefinition>
-                                <RowDefinition Height="30"></RowDefinition>
-                                <RowDefinition Height="30"></RowDefinition>
-                                <RowDefinition Height="30"></RowDefinition>
-                                <RowDefinition Height="30"></RowDefinition>
-                                <RowDefinition Height="30"></RowDefinition>
-                                <RowDefinition Height="*"></RowDefinition>
+                                <RowDefinition Height="35"></RowDefinition>
+                                <RowDefinition Height="35"></RowDefinition>
+                                <RowDefinition Height="26"></RowDefinition>
+                                <RowDefinition Height="50"></RowDefinition>
+                                <RowDefinition Height="40"></RowDefinition>
+                                <RowDefinition Height="45"></RowDefinition>
+                                <RowDefinition Height="55"></RowDefinition>
+                                <RowDefinition Height="41*"></RowDefinition>
+                                <RowDefinition Height="155*"/>
                             </Grid.RowDefinitions>
-                            <TextBlock Grid.Row="0" Style="{StaticResource SubHeaderTextBlockStyle}">*复杂设置</TextBlock>
-                            <TextBlock  Text="预加载选项：" Grid.Row="1"  FontSize="12" HorizontalAlignment="Left" Padding="5" Style="{StaticResource SubHeaderTextBlockStyle}"  />
-                            <StackPanel Grid.Row="2" Orientation="Horizontal">
-                                <TextBlock FontSize="10" Height="30" Width="5"></TextBlock>
-                                <Button Width="170" HorizontalAlignment="Left" Click="LoadLogsToCache_Click">加载日志信息到缓存</Button>
+                            <TextBlock Grid.Row="0" Style="{StaticResource SubHeaderTextBlockStyle}">*缓存过滤查询</TextBlock>
+                            <StackPanel Grid.Row="1" Orientation="Horizontal">
+                                <TextBlock  Text="业务分组："  FontSize="12" HorizontalAlignment="Center" Padding="5" Style="{StaticResource SubHeaderTextBlockStyle}"  />
+                                <ComboBox x:Name="cmb_DomainType" FontSize="12" Width="120" SelectedIndex="0" Height="30" SelectionChanged="cmb_DomainType_SelectionChanged">
+                                    <ComboBoxItem IsSelected="True">基础</ComboBoxItem>
+                                    <ComboBoxItem>衍生品</ComboBoxItem>
+                                    <ComboBoxItem>权益</ComboBoxItem>
+                                    <ComboBoxItem>固收</ComboBoxItem>
+                                </ComboBox>
                             </StackPanel>
-                            <TextBlock  Text="缓存过滤条件：" Grid.Row="3"  FontSize="12" HorizontalAlignment="Left" Padding="5" Style="{StaticResource SubHeaderTextBlockStyle}"  />
+                            <StackPanel Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Center" Height="30">
+                                <TextBlock  Text="缓存类型："  FontSize="12" HorizontalAlignment="Center" Padding="5" Style="{StaticResource SubHeaderTextBlockStyle}"  />
+                                <ComboBox x:Name="cmb_CacheType" FontSize="12" Width="178" SelectedIndex="0" Text="全部" Height="30" SelectionChanged="cmb_CacheType_SelectionChanged"></ComboBox>
+                            </StackPanel>
+                            <TextBlock  Text="设置过滤数据条件：" Grid.Row="3"  FontSize="12" HorizontalAlignment="Left" Padding="5" Style="{StaticResource SubHeaderTextBlockStyle}" Width="120"  />
                             <StackPanel Grid.Row="4" Orientation="Horizontal">
                                 <TextBlock FontSize="10" Height="30" Width="5"></TextBlock>
                                 <ComboBox x:Name="cmb_CacheColumn" FontSize="12" Width="120" SelectedIndex="0" Text="全部" Height="30"></ComboBox>
                                 <TextBlock  Text="="  FontSize="12" Height="30" HorizontalAlignment="Center" Padding="5" Style="{StaticResource SubHeaderTextBlockStyle}"  />
                                 <TextBox x:Name="tb_FilterText" FontSize="10" Height="30" Width="100"></TextBox>
                                 <TextBlock FontSize="10" Height="30" Width="10"></TextBlock>
-                                <Button Width="70" Click="AddFilterCondition_Click">添加</Button>
+                                <Button Width="70" Height="30" Click="AddFilterCondition_Click">添加</Button>
                             </StackPanel>
-                            <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right">
-                            </StackPanel>
+                            <Button Grid.Row="5" Content="查询数据" FontSize="11" Click="Button_Click" Margin="112,13,112,42" Grid.RowSpan="2"/>
+                            <Grid Grid.Row="9">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="8*"></RowDefinition>
+                                    <RowDefinition Height="49*"></RowDefinition>
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Text="过滤条件：" FontSize="11" Padding="5" Style="{StaticResource SubHeaderTextBlockStyle}"  />
+                                <RichTextBox Grid.Row="1" x:Name="rtx_FilterPattern" FontSize="11" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"></RichTextBox>
+                            </Grid>
                         </Grid>
                     </Grid>
                 </Grid>
             </TabItem>
             <!--设置界面-->
             <TabItem Header="设置界面">
-                <Grid Background="#FFE5E5E5">
+                <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="124*"></RowDefinition>
-                        <RowDefinition Height="376*"></RowDefinition>
-                        <RowDefinition Height="41*"></RowDefinition>
-                        <RowDefinition Height="68*"></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition Height="557*"></RowDefinition>
+                        <RowDefinition Height="51*"></RowDefinition>
                     </Grid.RowDefinitions>
-                    <!--基础设置-->
-                    <Grid Grid.Row="0" Background="AliceBlue">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="40"></RowDefinition>
-                            <RowDefinition Height="40"></RowDefinition>
-                            <RowDefinition Height="40"></RowDefinition>
-                            <RowDefinition Height="*"></RowDefinition>
-                        </Grid.RowDefinitions>
-                        <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Text="*基础设置" Style="{StaticResource HeaderTextBlockStyle}" Height="29" Width="128"></TextBlock>
-                        <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="基础缓存配置文件地址：" Width="250" TextAlignment="Right" Style="{StaticResource SubHeaderTextBlockStyle}"></TextBlock>
-                            <TextBox x:Name="tb_baseCacheSettingFile" IsReadOnly="True" Width="260" Height="30"></TextBox>
-                            <Button Click="CommonCacheConfigFileSelect_Click">选择文件</Button>
-                        </StackPanel>
-                        <StackPanel Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="衍生品缓存配置文件地址：" Width="250" TextAlignment="Right" Style="{StaticResource SubHeaderTextBlockStyle}"></TextBlock>
-                            <TextBox x:Name="tb_derCacheSettingFile" IsReadOnly="True" Width="260" Height="30"></TextBox>
-                            <Button Click="DerCacheConfigFileSelect_Click">选择文件</Button>
-                        </StackPanel>
-                    </Grid>
-                    <!--解析策略设置-->
-                    <Grid Grid.Row="1" Background="AntiqueWhite">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="40"></RowDefinition>
-                            <RowDefinition Height="40"></RowDefinition>
-                            <RowDefinition Height="40"></RowDefinition>
-                            <RowDefinition Height="258"></RowDefinition>
-                            <RowDefinition/>
-                        </Grid.RowDefinitions>
-                        <TextBlock HorizontalAlignment="Left" Grid.Row="0" VerticalAlignment="Top" Text="*解析策略设置" Style="{StaticResource HeaderTextBlockStyle}" Height="29" Width="164"></TextBlock>
-                        <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center" Height="30" Margin="0,5">
-                            <TextBlock Text="分行策略：" Width="250" TextAlignment="Right" Style="{StaticResource SubHeaderTextBlockStyle}"></TextBlock>
-                            <TextBox x:Name="txt_RawRowPattern" Width="500" Height="30"></TextBox>
-                        </StackPanel>
-                        <StackPanel Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Center" Height="30" Margin="0,5">
-                            <TextBlock Text="时间戳提取策略：" Width="250" TextAlignment="Right" Style="{StaticResource SubHeaderTextBlockStyle}"></TextBlock>
-                            <TextBox x:Name="txt_TimeStrapPattern" Width="500" Height="30"></TextBox>
-                        </StackPanel>
-                        <StackPanel Grid.Row="3" Orientation="Vertical" Margin="130,0">
-                            <TextBlock Text="缓存匹配策略："  Width="250" TextAlignment="Right" HorizontalAlignment="Left" Style="{StaticResource SubHeaderTextBlockStyle}"/>
-                            <DataGrid x:Name="grid_CachePattern" 
-                                      HorizontalAlignment="Center" 
-                                      AutoGenerateColumns="False" 
-                                      Height="188" 
-                                      Width="747">
-                                <DataGrid.Columns>
-                                    <DataGridTextColumn Header="缓存类型" Binding="{Binding CacheType}" Width="200"/>
-                                    <DataGridTextColumn Header="识别策略" Binding="{Binding Pattern}" Width="400"/>
-                                </DataGrid.Columns>
-                            </DataGrid>
-                            <StackPanel Orientation="Horizontal" Margin="5">
-                                <Button Width="60" Margin="5">添加</Button>
-                                <Button Width="60" Margin="5">修改</Button>
-                                <Button Width="60" Margin="5">删除</Button>
-                            </StackPanel>
-                        </StackPanel>
-                    </Grid>
+                    <ScrollViewer  Grid.Row="1">
+                        <Grid Background="#FFE5E5E5">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="203*"></RowDefinition>
+                                <RowDefinition Height="315*"></RowDefinition>
+                                <RowDefinition Height="12*"></RowDefinition>
+                                <RowDefinition Height="27*"></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <!--基础设置-->
+                            <Grid Grid.Row="0" Background="AliceBlue">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="40"></RowDefinition>
+                                    <RowDefinition Height="40"></RowDefinition>
+                                    <RowDefinition Height="40"></RowDefinition>
+                                    <RowDefinition Height="40"></RowDefinition>
+                                    <RowDefinition Height="40"></RowDefinition>
+                                    <RowDefinition Height="*"></RowDefinition>
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Top" Text="*基础设置" Style="{StaticResource HeaderTextBlockStyle}" Height="29" Width="128"></TextBlock>
+                                <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBlock Text="基础缓存配置文件地址：" Width="250" TextAlignment="Right" Style="{StaticResource SubHeaderTextBlockStyle}"></TextBlock>
+                                    <TextBox x:Name="tb_baseCacheSettingFile" IsReadOnly="True" Width="260" Height="30"></TextBox>
+                                    <Button Click="CommonCacheConfigFileSelect_Click">选择文件</Button>
+                                </StackPanel>
+                                <StackPanel Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBlock Text="衍生品缓存配置文件地址：" Width="250" TextAlignment="Right" Style="{StaticResource SubHeaderTextBlockStyle}"></TextBlock>
+                                    <TextBox x:Name="tb_derCacheSettingFile" IsReadOnly="True" Width="260" Height="30"></TextBox>
+                                    <Button Click="DerCacheConfigFileSelect_Click">选择文件</Button>
+                                </StackPanel>
+                                <StackPanel Grid.Row="3" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBlock Text="现货缓存配置文件地址：" Width="250" TextAlignment="Right" Style="{StaticResource SubHeaderTextBlockStyle}"></TextBlock>
+                                    <TextBox x:Name="tb_xhCacheSettingFile" IsReadOnly="True" Width="260" Height="30"></TextBox>
+                                    <Button Click="XHCacheConfigFileSelect_Click">选择文件</Button>
+                                </StackPanel>
+                                <StackPanel Grid.Row="4" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBlock Text="固收缓存配置文件地址：" Width="250" TextAlignment="Right" Style="{StaticResource SubHeaderTextBlockStyle}"></TextBlock>
+                                    <TextBox x:Name="tb_gsCacheSettingFile" IsReadOnly="True" Width="260" Height="30"></TextBox>
+                                    <Button Click="GSCacheConfigFileSelect_Click">选择文件</Button>
+                                </StackPanel>
+                            </Grid>
+                            <!--解析策略设置-->
+                            <Grid Grid.Row="1" Background="AntiqueWhite">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="40"></RowDefinition>
+                                    <RowDefinition Height="40"></RowDefinition>
+                                    <RowDefinition Height="40"></RowDefinition>
+                                    <RowDefinition Height="258"></RowDefinition>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <TextBlock HorizontalAlignment="Left" Grid.Row="0" VerticalAlignment="Top" Text="*解析策略设置" Style="{StaticResource HeaderTextBlockStyle}" Height="29" Width="164"></TextBlock>
+                                <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center" Height="30" Margin="0,5">
+                                    <TextBlock Text="分行策略：" Width="250" TextAlignment="Right" Style="{StaticResource SubHeaderTextBlockStyle}"></TextBlock>
+                                    <TextBox x:Name="txt_RawRowPattern" Width="500" Height="30"></TextBox>
+                                </StackPanel>
+                                <StackPanel Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Center" Height="30" Margin="0,5">
+                                    <TextBlock Text="时间戳提取策略：" Width="250" TextAlignment="Right" Style="{StaticResource SubHeaderTextBlockStyle}"></TextBlock>
+                                    <TextBox x:Name="txt_TimeStrapPattern" Width="500" Height="30"></TextBox>
+                                </StackPanel>
+                                <StackPanel Grid.Row="3" Orientation="Horizontal">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition></ColumnDefinition>
+                                            <ColumnDefinition></ColumnDefinition>
+                                        </Grid.ColumnDefinitions>
+                                    </Grid>
+                                    <TextBlock Grid.Column="0" Text="缓存匹配策略："  Width="250" TextAlignment="Right" HorizontalAlignment="Left" Style="{StaticResource SubHeaderTextBlockStyle}"/>
+                                    <DataGrid x:Name="grid_CachePattern"
+                                          Grid.Column="1"
+                                          HorizontalAlignment="Center" 
+                                          AutoGenerateColumns="False" 
+                                          Height="188" 
+                                          Width="747">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="缓存类型" Binding="{Binding CacheType}" Width="200"/>
+                                            <DataGridTextColumn Header="识别策略" Binding="{Binding Pattern}" Width="400"/>
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </StackPanel>
+                            </Grid>
+                        </Grid>
+                    </ScrollViewer>
                     <!--保存配置-->
                     <Grid Grid.Row="2">
                         <Grid.RowDefinitions></Grid.RowDefinitions>
@@ -160,7 +197,7 @@
                     </Grid>
                 </Grid>
             </TabItem>
-            <TabItem Header="测试界面">
+            <TabItem Header="测试界面" Visibility="Hidden">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition></RowDefinition>
