@@ -1,7 +1,6 @@
 ﻿using Cache;
 using Config.Entity;
 using Config.Interface;
-using Engine;
 using Log;
 using LogDecode;
 using ScrapyCache;
@@ -14,6 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Engine;
 
 namespace LogScrapy
 {
@@ -31,10 +31,10 @@ namespace LogScrapy
         public string AppConfigFile { get => appConfigFile; }
         public string LogConfigFile { get => logConfigFile; }
 
-        /// <summary>
-        /// 框架引擎
-        /// </summary>
-        public ScrapyEngine Engine { get; set; }
+        ///// <summary>
+        ///// 框架引擎
+        ///// </summary>
+        //public ScrapyEngine ScrapyEngine { get; set; }
 
         /// <summary>
         /// 视图层
@@ -48,15 +48,15 @@ namespace LogScrapy
         /// <param name="engine"></param>
         public LSPresenter(MainWindow view)
         {
-            ScrapyEngine engine = new ScrapyEngine();
+            //ScrapyEngine engine = new ScrapyEngine();
             EngineParam param = new EngineParam()
             {
                 AppConfigPath = AppConfigFile,
                 LogConfigPath = LogConfigFile,
             };
             //耗时操作
-            engine.BootEngine(param);
-            Engine = engine;
+            ScrapyEngine.BootEngine(param);
+            //ScrapyEngine = engine;
             View = view;
         }
 
@@ -67,7 +67,7 @@ namespace LogScrapy
         /// <returns></returns>
         public string GetCachePatternByType(string cacheType)
         {
-            CachePattern pattern = Engine.Get<IAppConfigManage>().UserConfig.缓存匹配策略列表.Find(p => p.CacheType!=null?p.CacheType.Equals(cacheType):false);
+            CachePattern pattern = ScrapyEngine.Get<IAppConfigManage>().UserConfig.缓存匹配策略列表.Find(p => p.CacheType!=null?p.CacheType.Equals(cacheType):false);
             if (pattern != null)
             {
                 return pattern.Pattern;
@@ -106,7 +106,7 @@ namespace LogScrapy
             List<string> types = new List<string>();
             try
             {
-                foreach (ICacheItem row in Engine.Get<ICachePool>().Get<ClientCacheConfigTable>().Get())
+                foreach (ICacheItem row in ScrapyEngine.Get<ICachePool>().Get<ClientCacheConfigTable>().Get())
                 {
                     ClientCacheConfig config = row as ClientCacheConfig;
                     types.Add(config.表名);
@@ -114,7 +114,7 @@ namespace LogScrapy
             }
             catch (Exception ex)
             {
-                Engine.Get<ILogContext>().LogForCommon.LogError(string.Format("获取缓存表信息失败：{0};StackTrace:{1}", ex.Message, ex.StackTrace));
+                ScrapyEngine.Get<ILogContext>().LogForCommon.LogError(string.Format("获取缓存表信息失败：{0};StackTrace:{1}", ex.Message, ex.StackTrace));
             }
             return types;
         }
@@ -128,7 +128,7 @@ namespace LogScrapy
             List<ClientCacheConfig> types = new List<ClientCacheConfig>();
             try
             {
-                foreach (ICacheItem row in Engine.Get<ICachePool>().Get<ClientCacheConfigTable>().Get(domainName, ClientCacheConfigTable.IndexByDomain))
+                foreach (ICacheItem row in ScrapyEngine.Get<ICachePool>().Get<ClientCacheConfigTable>().Get(domainName, ClientCacheConfigTable.IndexByDomain))
                 {
                     ClientCacheConfig config = row as ClientCacheConfig;
                     types.Add(config);
@@ -136,7 +136,7 @@ namespace LogScrapy
             }
             catch (Exception ex)
             {
-                Engine.Get<ILogContext>().LogForCommon.LogError(string.Format("获取缓存表信息失败：{0};StackTrace:{1}", ex.Message, ex.StackTrace));
+                ScrapyEngine.Get<ILogContext>().LogForCommon.LogError(string.Format("获取缓存表信息失败：{0};StackTrace:{1}", ex.Message, ex.StackTrace));
             }
             return types;
         }
@@ -150,13 +150,13 @@ namespace LogScrapy
             List<ClientCacheConfigColumn> columns = new List<ClientCacheConfigColumn>();
             try
             {
-                List<ICacheItem> tables = Engine.Get<ICachePool>().Get<ClientCacheConfigTable>().Get(cacheName);
+                List<ICacheItem> tables = ScrapyEngine.Get<ICachePool>().Get<ClientCacheConfigTable>().Get(cacheName);
                 if (tables.Count <= 0)
                 {
                     return columns;
                 }
                 ClientCacheConfig table = tables[0] as ClientCacheConfig;
-                foreach (ICacheItem row in Engine.Get<ICachePool>().Get<ClientCacheConfigColumnTable>().Get(table.表名, ClientCacheConfigColumnTable.IndexByTable))
+                foreach (ICacheItem row in ScrapyEngine.Get<ICachePool>().Get<ClientCacheConfigColumnTable>().Get(table.表名, ClientCacheConfigColumnTable.IndexByTable))
                 {
                     ClientCacheConfigColumn column = row as ClientCacheConfigColumn;
                     columns.Add(column);
@@ -164,7 +164,7 @@ namespace LogScrapy
             }
             catch (Exception ex)
             {
-                Engine.Get<ILogContext>().LogForCommon.LogError(string.Format("获取缓存表列信息失败：{0};StackTrace:{1}", ex.Message, ex.StackTrace));
+                ScrapyEngine.Get<ILogContext>().LogForCommon.LogError(string.Format("获取缓存表列信息失败：{0};StackTrace:{1}", ex.Message, ex.StackTrace));
             }
             return columns;
         }
@@ -177,7 +177,7 @@ namespace LogScrapy
         /// <returns></returns>
         public string GetColumnEngNameByChnName(string chnName, string cacheType)
         {
-            List<ICacheItem>columns = Engine.Get<ICachePool>().Get<ClientCacheConfigColumnTable>().Get(cacheType, ClientCacheConfigColumnTable.IndexByTable);
+            List<ICacheItem>columns = ScrapyEngine.Get<ICachePool>().Get<ClientCacheConfigColumnTable>().Get(cacheType, ClientCacheConfigColumnTable.IndexByTable);
             if (columns.Count > 0)
             {
                 ICacheItem item = columns.Find(p =>
@@ -206,7 +206,7 @@ namespace LogScrapy
             List<dynamic> results = new List<dynamic>();
             try
             {
-                logs = Engine.Get<ICachePool>().Get<LogInfoRowTable>().Get();
+                logs = ScrapyEngine.Get<ICachePool>().Get<LogInfoRowTable>().Get();
                 List<ClientCacheConfigColumn> columns = GetCacheColumn(cacheType);
                 //regexs.Clear();
                 //logs.AsParallel().ForAll(p =>
@@ -238,7 +238,7 @@ namespace LogScrapy
             }
             catch (Exception ex)
             {
-                Engine.Get<ILogContext>().LogForCommon.LogError(string.Format("筛选日志信息失败：{0};StackTrace:{1}", ex.Message, ex.StackTrace));
+                ScrapyEngine.Get<ILogContext>().LogForCommon.LogError(string.Format("筛选日志信息失败：{0};StackTrace:{1}", ex.Message, ex.StackTrace));
             }
             return results;
         }
@@ -259,13 +259,13 @@ namespace LogScrapy
         /// <param name="path"></param>
         public void LoadLogDatasToCache(string path)
         {
-            ILogUtility logUtility = Engine.Get<ILogUtility>();
+            ILogUtility logUtility = ScrapyEngine.Get<ILogUtility>();
             string logInfo = logUtility.ReadLogFile(@path);
             if (string.IsNullOrWhiteSpace(logInfo))
             {
                 return;
             }
-            List<LogEntityBase> logs = logUtility.DecodeLog(logInfo, Engine.Get<IAppConfigManage>().UserConfig.分行策略, Engine.Get<IAppConfigManage>().UserConfig.时间戳提取策略);
+            List<LogEntityBase> logs = logUtility.DecodeLog(logInfo, ScrapyEngine.Get<IAppConfigManage>().UserConfig.分行策略, ScrapyEngine.Get<IAppConfigManage>().UserConfig.时间戳提取策略);
             if (logs == null || logs.Count <= 0)
             {
                 return;
@@ -280,7 +280,7 @@ namespace LogScrapy
                     DataInfo = log.DataInfo,
                 });
             }
-            Engine.Get<ICachePool>().Get<LogInfoRowTable>().LoadDatas(logRows);
+            ScrapyEngine.Get<ICachePool>().Get<LogInfoRowTable>().LoadDatas(logRows);
         }
     }
 }

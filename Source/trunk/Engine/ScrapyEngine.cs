@@ -23,13 +23,13 @@ namespace Engine
         /// <summary>
         /// 容器上下文
         /// </summary>
-        IContainer context;
+        static IContainer context;
 
         #region 初始化及注销
         /// <summary>
         /// 系统引擎
         /// </summary>
-        public ScrapyEngine()
+        static ScrapyEngine()
         {
             InitEngine();
         }
@@ -37,7 +37,7 @@ namespace Engine
         /// <summary>
         /// 初始化引擎
         /// </summary>
-        private void InitEngine()
+        private static void InitEngine()
         {
             //注册服务
             var builder = new ContainerBuilder();
@@ -53,7 +53,7 @@ namespace Engine
         /// <summary>
         /// 启动引擎
         /// </summary>
-        public void BootEngine(EngineParam engineParam)
+        public static void BootEngine(EngineParam engineParam)
         {
             #region 配置服务初始化
             IAppConfigManage appConfig = Get<IAppConfigManage>();
@@ -102,19 +102,20 @@ namespace Engine
         /// </summary>
         /// <typeparam name="T">服务接口类型</typeparam>
         /// <returns></returns>
-        public T Get<T>()
+        public static T Get<T>()
         {
             return context.Resolve<T>();
         }
         #endregion
 
+        //TODO: 这些内容要一直到外部，实现规则外挂
         #region 缓存日志函数
         /// <summary>
         /// Debug日志
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="log"></param>
-        private void ScrapyCacheLogForDebug(string log)
+        private static void ScrapyCacheLogForDebug(string log)
         {
             Get<ILogContext>().LogForCache.LogDebug(log);
         }
@@ -123,7 +124,7 @@ namespace Engine
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="log"></param>
-        private void ScrapyCacheLogForInfo(string log)
+        private static void ScrapyCacheLogForInfo(string log)
         {
             Get<ILogContext>().LogForCache.LogInfo(log);
         }
@@ -132,7 +133,7 @@ namespace Engine
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="log"></param>
-        private void ScrapyCacheLogForError(string log)
+        private static void ScrapyCacheLogForError(string log)
         {
             Get<ILogContext>().LogForCache.LogError(log);
         }

@@ -197,6 +197,33 @@
                     </Grid>
                 </Grid>
             </TabItem>
+            <!--工具消息-->
+            <TabItem Header="工具消息">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1"></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition  Height="1"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1"></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition  Width="1"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Grid Grid.Row="1" Grid.Column="1">
+                        <ScrollViewer>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="40"></RowDefinition>
+                                    <RowDefinition Height="*"></RowDefinition>
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Style="{StaticResource HeaderTextBlockStyle}">*工具消息</TextBlock>
+                                <local:LSDataGrid Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"></local:LSDataGrid>
+                            </Grid>
+                        </ScrollViewer>
+                    </Grid>
+                </Grid>
+            </TabItem>
             <TabItem Header="测试界面" Visibility="Hidden">
                 <Grid>
                     <Grid.RowDefinitions>

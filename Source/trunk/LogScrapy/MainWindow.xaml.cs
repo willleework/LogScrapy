@@ -66,7 +66,7 @@ namespace LogScrapy
             dlg.ShowInTaskbar = false;
 
             Presenter = new LSPresenter(this);
-            Presenter.Engine.Get<ITaskMange>().Init(SynchronizationContext.Current);
+            ScrapyEngine.Get<ITaskMange>().Init(SynchronizationContext.Current);
             QueryPageInit();
             SettingInit();
         }
@@ -222,7 +222,7 @@ namespace LogScrapy
             dynamic param = new ExpandoObject();
             param.Regexs = regexs;
             param.CacheType = cmb_CacheType.Text;
-            Presenter.Engine.Get<ITaskMange>().AsyncRunWithCallBack<dynamic, List<dynamic>>(Presenter.GetLogInfoRowsByRegFilters, BingdingLogs, param as object);
+            ScrapyEngine.Get<ITaskMange>().AsyncRunWithCallBack<dynamic, List<dynamic>>(Presenter.GetLogInfoRowsByRegFilters, BingdingLogs, param as object);
             ShowWaitingDialog();
         }
 
@@ -326,7 +326,7 @@ namespace LogScrapy
                 MessageBox.Show("日志文件不存在");
                 return;
             }
-            Presenter.Engine.Get<ITaskMange>().AsyncRunWithCallBack<string>(Presenter.LoadLogDatasToCache, CloseWaitingDialog, LogFile);
+            ScrapyEngine.Get<ITaskMange>().AsyncRunWithCallBack<string>(Presenter.LoadLogDatasToCache, CloseWaitingDialog, LogFile);
             ShowWaitingDialog();
         }
     }
@@ -342,15 +342,15 @@ namespace LogScrapy
         /// </summary>
         private void SettingInit()
         {
-            tb_baseCacheSettingFile.Text = Presenter.Engine.Get<IAppConfigManage>().UserConfig.公共缓存配置目录;
-            tb_derCacheSettingFile.Text = Presenter.Engine.Get<IAppConfigManage>().UserConfig.衍生品缓存配置目录;
-            tb_xhCacheSettingFile.Text = Presenter.Engine.Get<IAppConfigManage>().UserConfig.权益缓存配置目录;
-            tb_gsCacheSettingFile.Text = Presenter.Engine.Get<IAppConfigManage>().UserConfig.固收缓存配置目录;
-            txt_RawRowPattern.Text = Presenter.Engine.Get<IAppConfigManage>().UserConfig.分行策略;
-            txt_TimeStrapPattern.Text = Presenter.Engine.Get<IAppConfigManage>().UserConfig.时间戳提取策略;
-            if (Presenter.Engine.Get<IAppConfigManage>().UserConfig.缓存匹配策略列表 != null && Presenter.Engine.Get<IAppConfigManage>().UserConfig.缓存匹配策略列表.Count > 0)
+            tb_baseCacheSettingFile.Text = ScrapyEngine.Get<IAppConfigManage>().UserConfig.公共缓存配置目录;
+            tb_derCacheSettingFile.Text = ScrapyEngine.Get<IAppConfigManage>().UserConfig.衍生品缓存配置目录;
+            tb_xhCacheSettingFile.Text = ScrapyEngine.Get<IAppConfigManage>().UserConfig.权益缓存配置目录;
+            tb_gsCacheSettingFile.Text = ScrapyEngine.Get<IAppConfigManage>().UserConfig.固收缓存配置目录;
+            txt_RawRowPattern.Text = ScrapyEngine.Get<IAppConfigManage>().UserConfig.分行策略;
+            txt_TimeStrapPattern.Text = ScrapyEngine.Get<IAppConfigManage>().UserConfig.时间戳提取策略;
+            if (ScrapyEngine.Get<IAppConfigManage>().UserConfig.缓存匹配策略列表 != null && ScrapyEngine.Get<IAppConfigManage>().UserConfig.缓存匹配策略列表.Count > 0)
             {
-                grid_CachePattern.ItemsSource = new ObservableCollection<CachePattern>(Presenter.Engine.Get<IAppConfigManage>().UserConfig.缓存匹配策略列表);
+                grid_CachePattern.ItemsSource = new ObservableCollection<CachePattern>(ScrapyEngine.Get<IAppConfigManage>().UserConfig.缓存匹配策略列表);
             }
         }
 
@@ -360,19 +360,19 @@ namespace LogScrapy
         /// <returns></returns>
         private void SaveSetting()
         {
-            Presenter.Engine.Get<IAppConfigManage>().UserConfig.公共缓存配置目录 = tb_baseCacheSettingFile.Text;
-            Presenter.Engine.Get<IAppConfigManage>().UserConfig.衍生品缓存配置目录 = tb_derCacheSettingFile.Text;
-            Presenter.Engine.Get<IAppConfigManage>().UserConfig.分行策略 = txt_RawRowPattern.Text;
-            Presenter.Engine.Get<IAppConfigManage>().UserConfig.时间戳提取策略 = txt_TimeStrapPattern.Text;
+            ScrapyEngine.Get<IAppConfigManage>().UserConfig.公共缓存配置目录 = tb_baseCacheSettingFile.Text;
+            ScrapyEngine.Get<IAppConfigManage>().UserConfig.衍生品缓存配置目录 = tb_derCacheSettingFile.Text;
+            ScrapyEngine.Get<IAppConfigManage>().UserConfig.分行策略 = txt_RawRowPattern.Text;
+            ScrapyEngine.Get<IAppConfigManage>().UserConfig.时间戳提取策略 = txt_TimeStrapPattern.Text;
 
             ObservableCollection<CachePattern> patterns = grid_CachePattern.ItemsSource as ObservableCollection<CachePattern>;
             if (patterns != null)
             {
-                Presenter.Engine.Get<IAppConfigManage>().UserConfig.缓存匹配策略列表 = new List<CachePattern>(patterns.ToList());
+                ScrapyEngine.Get<IAppConfigManage>().UserConfig.缓存匹配策略列表 = new List<CachePattern>(patterns.ToList());
             }
             else
             {
-                Presenter.Engine.Get<IAppConfigManage>().UserConfig.缓存匹配策略列表.Clear();
+                ScrapyEngine.Get<IAppConfigManage>().UserConfig.缓存匹配策略列表.Clear();
             }
         }
 
@@ -385,7 +385,7 @@ namespace LogScrapy
         {
             SaveSetting();
             UserAppConfigParam config = new UserAppConfigParam() { ConfigPath = @Presenter.AppConfigFile };
-            Presenter.Engine.Get<IAppConfigManage>().UserConfig.SaveConfigs(config);
+            ScrapyEngine.Get<IAppConfigManage>().UserConfig.SaveConfigs(config);
         }
 
         /// <summary>
@@ -401,7 +401,7 @@ namespace LogScrapy
             if (ofd.ShowDialog() == true)
             {
                 tb_baseCacheSettingFile.Text = ofd.FileName;
-                Presenter.Engine.Get<IAppConfigManage>().UserConfig.公共缓存配置目录 = ofd.FileName;
+                ScrapyEngine.Get<IAppConfigManage>().UserConfig.公共缓存配置目录 = ofd.FileName;
             }
         }
 
@@ -418,7 +418,7 @@ namespace LogScrapy
             if (ofd.ShowDialog() == true)
             {
                 tb_derCacheSettingFile.Text = ofd.FileName;
-                Presenter.Engine.Get<IAppConfigManage>().UserConfig.衍生品缓存配置目录 = ofd.FileName;
+                ScrapyEngine.Get<IAppConfigManage>().UserConfig.衍生品缓存配置目录 = ofd.FileName;
             }
         }
 
@@ -435,7 +435,7 @@ namespace LogScrapy
             if (ofd.ShowDialog() == true)
             {
                 tb_xhCacheSettingFile.Text = ofd.FileName;
-                Presenter.Engine.Get<IAppConfigManage>().UserConfig.权益缓存配置目录 = ofd.FileName;
+                ScrapyEngine.Get<IAppConfigManage>().UserConfig.权益缓存配置目录 = ofd.FileName;
             }
         }
 
@@ -452,7 +452,7 @@ namespace LogScrapy
             if (ofd.ShowDialog() == true)
             {
                 tb_gsCacheSettingFile.Text = ofd.FileName;
-                Presenter.Engine.Get<IAppConfigManage>().UserConfig.固收缓存配置目录 = ofd.FileName;
+                ScrapyEngine.Get<IAppConfigManage>().UserConfig.固收缓存配置目录 = ofd.FileName;
             }
         }
     }
@@ -498,7 +498,7 @@ namespace LogScrapy
             //#endregion
 
             ////#region 解析日志
-            ////ILogUtility logUtility = Presenter.Engine.Get<ILogUtility>();
+            ////ILogUtility logUtility = ScrapyEngine.Get<ILogUtility>();
             ////if (!File.Exists(LogFile))
             ////{
             ////    MessageBox.Show("日志文件不存在");
@@ -509,7 +509,7 @@ namespace LogScrapy
             ////{
             ////    return;
             ////}
-            ////List<LogEntityBase> logs = logUtility.DecodeLog(log, Presenter.Engine.Get<IAppConfigManage>().UserConfig.分行策略, Presenter.Engine.Get<IAppConfigManage>().UserConfig.时间戳提取策略);
+            ////List<LogEntityBase> logs = logUtility.DecodeLog(log, ScrapyEngine.Get<IAppConfigManage>().UserConfig.分行策略, ScrapyEngine.Get<IAppConfigManage>().UserConfig.时间戳提取策略);
             ////if (logs == null || logs.Count <= 0)
             ////{
             ////    return;
@@ -518,7 +518,7 @@ namespace LogScrapy
             ////#endregion
             //List<ICacheItem> logs = new List<ICacheItem>();
             //List<LogInfoRow> infoRows = new List<LogInfoRow>();
-            //logs = Presenter.Engine.Get<ICachePool>().Get<LogInfoRowTable>().Get();
+            //logs = ScrapyEngine.Get<ICachePool>().Get<LogInfoRowTable>().Get();
             //logs.AsParallel().ForAll(p => 
             //{
             //    LogInfoRow row = p as LogInfoRow;
