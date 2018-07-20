@@ -10,7 +10,7 @@ namespace Task
     /// <summary>
     /// 任务管理
     /// </summary>
-    public class TaskManage: ITaskMange
+    public class TaskManage : ITaskMange
     {
         SynchronizationContext _context = null;
         /// <summary>
@@ -18,7 +18,16 @@ namespace Task
         /// </summary>
         public SynchronizationContext Context { get => _context; }
 
-        TaskFactory _factory= null;
+        TaskFactory _factory = null;
+
+        /// <summary>
+        /// 任务调度分组字典，以时间间隔分组
+        /// </summary>
+        private Dictionary<int, List<Action>> _scheduleTasks = new Dictionary<int, List<Action>>();
+        private List<Timer> _timers = new List<Timer>();
+        private Dictionary<int, Timer> _timerDic = new Dictionary<int, Timer>();
+
+        ReaderWriterLockSlim _sheduleLock = new ReaderWriterLockSlim();
 
         /// <summary>
         /// 任务管理器
@@ -42,6 +51,7 @@ namespace Task
 
         /// <summary>
         /// 异步执行任务
+        /// 如果是耗时操作，请指定option参数为LongRunning
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="method"></param>
@@ -239,6 +249,152 @@ namespace Task
                     }
                 }
             });
+        }
+
+        /// <summary>
+        /// 任务调度（待测试方法）
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="method">任务</param>
+        /// <param name="durations">调度间隔</param>
+        /// <param name="options">调度参数</param>
+        public void RegisterScheduleTask(Action method, int durations, TaskCreationOptions options = TaskCreationOptions.PreferFairness)
+        {
+            try
+            {
+                bool addNewSchedule = false;
+                _sheduleLock.EnterUpgradeableReadLock();
+                if (!_scheduleTasks.ContainsKey(durations))
+                {
+                    _sheduleLock.EnterWriteLock();
+                    if (!_timerDic.ContainsKey(durations))
+                    {
+                        Timer timer = new Timer(p => { RunScheduleTasks((int)p); }, durations, Timeout.Infinite, durations);
+                        _timerDic[durations] = timer;
+                        addNewSchedule = true;
+                    }
+                    _scheduleTasks.Add(durations, new List<Action>());
+                }
+                else
+                {
+                    _sheduleLock.EnterWriteLock();
+                }
+                _scheduleTasks[durations].Add(method);
+                //启动计时器
+                if (addNewSchedule)
+                {
+                    _timerDic[durations].Change(0, durations);
+                }
+            }
+            catch (Exception ex)
+            {
+                TaskLog.LogExcepion("任务管理器注册调度任务失败", ex);
+            }
+            finally
+            {
+                _sheduleLock.ExitWriteLock();
+                _sheduleLock.ExitUpgradeableReadLock();
+            }
+        }
+
+        /// <summary>
+        /// 注销任务调度（待测试方法）
+        /// </summary>
+        /// <param name="method"></param>
+        /// <param name="durations"></param>
+        public void UnRegisterScheduleTask(Action method, int durations)
+        {
+            _sheduleLock.EnterUpgradeableReadLock();
+            try
+            {
+                if (_scheduleTasks.ContainsKey(durations) && _scheduleTasks[durations].Count > 0)
+                {
+                    _sheduleLock.EnterWriteLock();
+                    _scheduleTasks[durations].Remove(method);//TODO: 此处如果抛出异常，会导致锁退出异常
+                    _sheduleLock.ExitWriteLock();
+                }
+            }
+            catch (Exception ex)
+            {
+                TaskLog.LogExcepion("任务管理器注销调度任务失败", ex);
+            }
+            finally
+            {
+                _sheduleLock.ExitUpgradeableReadLock();
+            }
+        }
+
+        /// <summary>
+        /// 执行任务队列
+        /// </summary>
+        /// <param name="dutations"></param>
+        private void RunScheduleTasks(int dutations)
+        {
+            _sheduleLock.EnterUpgradeableReadLock();
+            if (!_scheduleTasks.ContainsKey(dutations) || _scheduleTasks[dutations].Count <= 0)
+            {
+                CheckTaskGroupValid(dutations);
+                TaskLog.LogInfo(string.Format("任务管理器没有发现调度频度【{0}ms】的任务队列，本次执行直接退出", dutations));
+            }
+            try
+            {
+                List<Action> tasks = new List<Action>();
+                tasks.AddRange(_scheduleTasks[dutations]);
+                foreach (Action task in tasks)
+                {
+                    try
+                    {
+                        //TODO：此处将任务推送到线程池队列中，如果是耗时操作，会导致线程池资源耗尽
+                        //应该将调度任务封装，区分耗时操作和简单操作（外部属性和内部检测），UI线程和工作者线程
+                        _factory.StartNew(() => { task(); });
+                    }
+                    catch (Exception ex)
+                    {
+                        TaskLog.LogExcepion(string.Format("任务调度器执行任务失败，任务名称【{0}】，分组【{1}】", task.Method.Name, dutations), ex);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                TaskLog.LogExcepion(string.Format("执行任务队列出错，分组【{0}】", dutations), ex);
+            }
+            finally
+            {
+                _sheduleLock.EnterUpgradeableReadLock();
+            }
+        }
+
+        /// <summary>
+        /// 检查任务组有效性
+        /// </summary>
+        /// <param name="duration"></param>
+        private void CheckTaskGroupValid(int duration)
+        {
+            _sheduleLock.EnterWriteLock();
+            try
+            {
+                if (_scheduleTasks.ContainsKey(duration) || _scheduleTasks[duration].Count <= 0)
+                {
+                    if (_timerDic.ContainsKey(duration))
+                    {
+                        //关闭计时器
+                        Timer timer = _timerDic[duration];
+
+                        timer.Change(Timeout.Infinite, duration);
+                        timer.Dispose();
+                        _timerDic.Remove(duration);
+                        _timers.Remove(timer);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                TaskLog.LogExcepion("检查任务组有效性", ex);
+            }
+            finally
+            {
+                _sheduleLock.ExitReadLock();
+            }
         }
     }
 }
