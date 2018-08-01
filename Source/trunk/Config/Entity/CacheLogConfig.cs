@@ -58,23 +58,51 @@ namespace Config.Entity
             CacheLogConfigParam configParam = param as CacheLogConfigParam;
             if (File.Exists(configParam.公共缓存配置目录))
             {
-                基础组缓存表 = ExcelUtility.ExcelToDataTable(configParam.公共缓存配置目录, "缓存表");
-                基础组缓存字段表 = ExcelUtility.ExcelToDataTable(configParam.公共缓存配置目录, "缓存表字段");
+                try
+                {
+                    基础组缓存表 = ExcelUtility.ExcelToDataTable(configParam.公共缓存配置目录, "缓存表");
+                    基础组缓存字段表 = ExcelUtility.ExcelToDataTable(configParam.公共缓存配置目录, "缓存表字段");
+                }
+                catch (Exception ex)
+                {
+                    AppConfigManage.LogError(string.Format("加载公共缓存配置出错：配合文件【{0}】，错误信息【{1}】", configParam.公共缓存配置目录, ex.Message));
+                }
             }
             if (File.Exists(configParam.衍生品缓存配置目录))
             {
-                衍生品缓存表 = ExcelUtility.ExcelToDataTable(configParam.衍生品缓存配置目录, "缓存表");
-                衍生品缓存字段表 = ExcelUtility.ExcelToDataTable(configParam.衍生品缓存配置目录, "缓存表字段");
+                try
+                {
+                    衍生品缓存表 = ExcelUtility.ExcelToDataTable(configParam.衍生品缓存配置目录, "缓存表");
+                    衍生品缓存字段表 = ExcelUtility.ExcelToDataTable(configParam.衍生品缓存配置目录, "缓存表字段");
+                }
+                catch (Exception ex)
+                {
+                    AppConfigManage.LogError(string.Format("加载衍生品缓存配置出错：配合文件【{0}】，错误信息【{1}】", configParam.衍生品缓存配置目录, ex.Message));
+                }
             }
             if (File.Exists(configParam.固收缓存配置目录))
             {
-                固收缓存表 = ExcelUtility.ExcelToDataTable(configParam.固收缓存配置目录, "缓存表");
-                固收缓存字段表 = ExcelUtility.ExcelToDataTable(configParam.固收缓存配置目录, "缓存表字段");
+                try
+                {
+                    固收缓存表 = ExcelUtility.ExcelToDataTable(configParam.固收缓存配置目录, "缓存表");
+                    固收缓存字段表 = ExcelUtility.ExcelToDataTable(configParam.固收缓存配置目录, "缓存表字段");
+                }
+                catch (Exception ex)
+                {
+                    AppConfigManage.LogError(string.Format("加载固收缓存配置出错：配合文件【{0}】，错误信息【{1}】", configParam.固收缓存配置目录, ex.Message));
+                }
             }
             if (File.Exists(configParam.权益缓存配置目录))
             {
-                权益缓存表 = ExcelUtility.ExcelToDataTable(configParam.权益缓存配置目录, "缓存表");
-                权益缓存字段表 = ExcelUtility.ExcelToDataTable(configParam.权益缓存配置目录, "缓存表字段");
+                try
+                {
+                    权益缓存表 = ExcelUtility.ExcelToDataTable(configParam.权益缓存配置目录, "缓存表");
+                    权益缓存字段表 = ExcelUtility.ExcelToDataTable(configParam.权益缓存配置目录, "缓存表字段");
+                }
+                catch (Exception ex)
+                {
+                    AppConfigManage.LogError(string.Format("加载权益缓存配置出错：配合文件【{0}】，错误信息【{1}】", configParam.权益缓存配置目录, ex.Message));
+                }
             }
         }
 

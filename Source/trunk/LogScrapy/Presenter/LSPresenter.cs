@@ -98,6 +98,24 @@ namespace LogScrapy
         }
 
         /// <summary>
+        /// 获取业务类型
+        /// </summary>
+        /// <returns></returns>
+        public List<string> GetDomainTypes()
+        {
+            List<string> domainTypes = new List<string>();
+            foreach (ICacheItem row in ScrapyEngine.Get<ICachePool>().Get<ClientCacheConfigTable>().Get())
+            {
+                ClientCacheConfig config = row as ClientCacheConfig;
+                if (!domainTypes.Contains(config.后台组))
+                {
+                    domainTypes.Add(config.后台组);
+                }
+            }
+            return domainTypes;
+        }
+
+        /// <summary>
         /// 获取缓存类型
         /// </summary>
         /// <returns></returns>

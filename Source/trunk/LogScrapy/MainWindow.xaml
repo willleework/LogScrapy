@@ -69,10 +69,10 @@
                             <StackPanel Grid.Row="1" Orientation="Horizontal">
                                 <TextBlock  Text="业务分组："  FontSize="12" HorizontalAlignment="Center" Padding="5" Style="{StaticResource SubHeaderTextBlockStyle}"  />
                                 <ComboBox x:Name="cmb_DomainType" FontSize="12" Width="120" SelectedIndex="0" Height="30" SelectionChanged="cmb_DomainType_SelectionChanged">
-                                    <ComboBoxItem IsSelected="True">基础</ComboBoxItem>
+                                    <!--<ComboBoxItem IsSelected="True">基础</ComboBoxItem>
                                     <ComboBoxItem>衍生品</ComboBoxItem>
                                     <ComboBoxItem>权益</ComboBoxItem>
-                                    <ComboBoxItem>固收</ComboBoxItem>
+                                    <ComboBoxItem>固收</ComboBoxItem>-->
                                 </ComboBox>
                             </StackPanel>
                             <StackPanel Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Center" Height="30">

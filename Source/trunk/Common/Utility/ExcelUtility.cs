@@ -121,13 +121,13 @@ namespace Common.Utility
                 }
                 return dataTable;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 if (fs != null)
                 {
                     fs.Close();
                 }
-                return null;
+                throw ex;
             }
         }
     }

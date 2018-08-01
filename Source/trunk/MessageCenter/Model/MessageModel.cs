@@ -17,6 +17,11 @@ namespace LogScrapy
         public string Type { get; set; }
 
         /// <summary>
+        /// 消息ID
+        /// </summary>
+        public int ID { get; set; }
+
+        /// <summary>
         /// 消息接收时间
         /// </summary>
         public string Time { get; set; }

@@ -19,6 +19,17 @@
       <CacheType>期货埋单表</CacheType>
       <Pattern>\[缓存\|FuturePre\]收到更新消息\(FuturePre,oplus.jy_tfutadvscheme\)</Pattern>
     </CachePattern>
-    <CachePattern />
+    <CachePattern>
+      <CacheType>证券信息表</CacheType>
+      <Pattern>\[缓存\|Stock\]收到更新消息\(Stock,oplus.pub_tstockinfo\)</Pattern>
+    </CachePattern>
+    <CachePattern>
+      <CacheType>期货信息表</CacheType>
+      <Pattern>\[缓存\|Future\]收到更新消息\(Future,oplus.pub_tfuturesinfo\)</Pattern>
+    </CachePattern>
+    <CachePattern>
+      <CacheType>期货套利代码表</CacheType>
+      <Pattern>\[缓存\|FutureArbiCode\]收到更新消息\(FutureArbiCode,oplus.pub_tfuturearbitrageinfo\)</Pattern>
+    </CachePattern>
   </缓存匹配策略列表>
 </UserAppConfig>

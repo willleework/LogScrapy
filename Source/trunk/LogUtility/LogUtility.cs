@@ -72,5 +72,26 @@ namespace LogDecode
             }
             return datas;
         }
+
+        /// <summary>
+        /// 解码日志内容
+        /// </summary>
+        /// <param name="log"></param>
+        /// <param name="rowPattern"></param>
+        /// <param name="timeaPattern"></param>
+        /// <returns></returns>
+        public List<LogEntityBase> DecodeLog1(string log, string rowPattern, string timeaPattern)
+        {
+            List<LogEntityBase> datas = new List<LogEntityBase>();
+            if (string.IsNullOrWhiteSpace(log))
+            {
+                return datas;
+            }
+            List<string> dataLists = new List<string>();
+            string[] rlsts = Regex.Split(log, @rowPattern);
+            dataLists = new List<string>(rlsts);
+
+            return datas;
+        }
     }
 }

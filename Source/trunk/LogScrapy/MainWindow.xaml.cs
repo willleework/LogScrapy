@@ -174,8 +174,13 @@ namespace LogScrapy
         }
         #endregion
 
+        /// <summary>
+        /// 查询面板初始化
+        /// </summary>
         private void QueryPageInit()
         {
+            cmb_DomainType.ItemsSource = new ObservableCollection<string>(Presenter.GetDomainTypes());
+            cmb_DomainType.SelectedIndex = 0;
             cmb_DomainType_SelectionChanged(null, null);
             dataGrid.GeneratingColumnsEvent += GenerateColumns;
         }
@@ -265,13 +270,7 @@ namespace LogScrapy
                 return;
             }
             ObservableCollection<string> cacheTyps;
-            ComboBoxItem domainItem = (ComboBoxItem)cmb_DomainType.SelectedItem;
-            string domainType = string.Empty;
-            if (domainItem.Content == null)
-            {
-                return;
-            }
-            domainType = (string)domainItem.Content;
+            string domainType = (string)cmb_DomainType.SelectedItem;
             if (string.IsNullOrWhiteSpace(domainType))
             {
                 cacheTyps = new ObservableCollection<string>();
